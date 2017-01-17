@@ -30,12 +30,19 @@ export class MapComponent {
 		var leafletAjaxTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.ajax.min.js');
 		var leafletVectorgridTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.vectorgrid.bundled.js');
 		var leafletDvfTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet-dvf.js');
+		var longTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/long.js');
+		var byteBufferTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/bytebuffer.js');
+		var protobufTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/protobuf.js');
+
 
 		this.elementRef.nativeElement.appendChild(jqueryTag);
 		this.elementRef.nativeElement.appendChild(leafletTag);
 		this.elementRef.nativeElement.appendChild(leafletAjaxTag);
 		this.elementRef.nativeElement.appendChild(leafletVectorgridTag);
 		this.elementRef.nativeElement.appendChild(leafletDvfTag);
+		this.elementRef.nativeElement.appendChild(longTag);
+		this.elementRef.nativeElement.appendChild(byteBufferTag);
+		this.elementRef.nativeElement.appendChild(protobufTag);
 	}
 
 	ngAfterViewInit(){
