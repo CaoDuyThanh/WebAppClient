@@ -2,6 +2,9 @@
  * INITIALIZE MAP
  */
 var mymap = L.map('mapid');
+var protobuf = dcodeIO.ProtoBuf;
+var bytebuffer = dcodeIO.ByteBuffer;
+
 
 /**
  * CREATE RASTER LAYER
@@ -33,7 +36,7 @@ var vectorOptions = {
     road: function LoadRoadDensity(properties, zoom) {
             if (properties.class == 'main' || properties.class == 'motorway'|| properties.class == 'path') {
                 groupRoads.push(properties.osm_id);
-                if (groupRoads.length >= 100){
+                if (groupRoads.length >= 50){
                     sendAjax(groupRoads);
                     groupRoads = [];
                 }
@@ -75,14 +78,12 @@ function autoLoadDensityMap(){
 }
 autoLoadDensityMap();
 
-
-
 /**
  * REQUEST - RESPONE HANDLER
  */
 // Load density of a group of roads
 var loadDensityGroupRoads = function(){
-    if (0 < groupRoads.length && groupRoads.length < 100){
+    if (0 < groupRoads.length && groupRoads.length < 50){
         sendAjax(groupRoads);
         groupRoads = [];
     }
@@ -90,85 +91,176 @@ var loadDensityGroupRoads = function(){
 }
 loadDensityGroupRoads();
 
+// Create protobuffer handler
+var builder = protobuf.loadProtoFile('/app/map/streets.proto');
+var DensityStreetsProtobuf = builder.build("DensityStreets").DensityStreets;
+ 
+
 var listOfPolyline = [];
+
+
+
 var sendAjax = function(data){
-    $.ajax({
-        url: L.densityAPI, 
-        type: "get",
-        data: {
-            streetIds: data
-        },
-        success: function(result){
-            var streets = result;            
-            for (var streetId in streets){
-                if (streets.hasOwnProperty(streetId)){
-                    var segments = streets[streetId];
+    var url = L.densityAPI;
+    for (var idx = 0; idx < data.length; idx++){
+        if (url.indexOf('?') === -1){
+            url = url + "?streetIds[]=" + data[idx];
+        }else{
+            url = url + "&streetIds[]=" + data[idx];
+        }
+    }
+    var xhr = new XMLHttpRequest();
+    xhr.open('get', url, true);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function(buffer){
+        if (this.status == 200){
+            var data = DensityStreetsProtobuf.decode(this.response);
+            var streets = data.streets;
+            streets.forEach(function(street){
+                var streetId = street.street_id;
+                if (listOfPolyline.hasOwnProperty(streetId)){
+                    var weightedPolyline = listOfPolyline[streetId];
+                    var segments = street.segments;
+                    var lastSegment;
+                    var count = 0;
+                    segments.forEach(function(segment){
+                        weightedPolyline._latlngs[count].weight = 10 + segment.density_ste / 100;
+                        lastSegment = segment;
+                        count++;
+                    });
+                    var latlng = new L.LatLng(lastSegment.node_end.lat, lastSegment.node_end.lon);
+                    latlng.weight = 10 + lastSegment.density_ste / 100;
 
-                    if (listOfPolyline.hasOwnProperty(streetId)){
-                        var weightedPolyline = listOfPolyline[streetId];
-                        var count = 0;
-                        var lastSegment;
-                        for (var segmentId in segments){
-                            if (segments.hasOwnProperty(segmentId)) {
-                                var segment = segments[segmentId];
-                                weightedPolyline._latlngs[count].weight = 10 + segment.density_ste / 100;
-                                lastSegment = segment;
-                                count++;
-                            }
-                        }
-                        var latlng = new L.LatLng(segment.node_end.lat, segment.node_end.lon);
-                        latlng.weight = 10 + segment.density_ste / 100;
-
-                        weightedPolyline.removeFrom(mymap);
-                        var weightedPolyline = new L.WeightedPolyline(weightedPolyline._latlngs, {
-                                fill: true,
-                                fillColor: '#FF0000',
-                                fillOpacity: 0.4,
-                                stroke: false,
-                                dropShadow: false,
-                                gradient: true,
-                                weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
-                            });                       
-                        weightedPolyline.addTo(mymap);
-                        listOfPolyline[streetId] = weightedPolyline;
-                    }else{
-                        var runData = [];
-                        var lastSegment;
-                        for (var segmentId in segments){
-                            if (segments.hasOwnProperty(segmentId)) {
-                                var segment = segments[segmentId];
-                                var latlng = new L.LatLng(segment.node_start.lat, segment.node_start.lon);
-                                latlng.weight = 10 + segment.density_ste / 100;
-                                runData.push(latlng);
-                                lastSegment = segment;
-                            }          
-                        }
-
-                        var latlng = new L.LatLng(segment.node_end.lat, segment.node_end.lon);
+                    weightedPolyline.removeFrom(mymap);
+                    var weightedPolyline = new L.WeightedPolyline(weightedPolyline._latlngs, {
+                            fill: true,
+                            fillColor: '#FF0000',
+                            fillOpacity: 0.4,
+                            stroke: false,
+                            dropShadow: false,
+                            gradient: true,
+                            weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
+                        });                       
+                    weightedPolyline.addTo(mymap);
+                    listOfPolyline[streetId] = weightedPolyline;
+                }else{
+                    var runData = [];
+                    var segments = street.segments;
+                    var lastSegment;
+                    segments.forEach(function(segment){
+                        var latlng = new L.LatLng(segment.node_start.lat, segment.node_start.lon);
                         latlng.weight = 10 + segment.density_ste / 100;
                         runData.push(latlng);
+                        lastSegment = segment;
+                    });
 
-                        if (runData.length > 0){                    
-                            var weightedPolyline = new L.WeightedPolyline(runData, {
-                                fill: true,
-                                fillColor: '#FF0000',
-                                fillOpacity: 0.4,
-                                stroke: false,
-                                dropShadow: false,
-                                gradient: true,
-                                weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
-                            });
-                            listOfPolyline[streetId] = weightedPolyline;
-                            weightedPolyline.addTo(mymap);
-                        }
+                    var latlng = new L.LatLng(lastSegment.node_end.lat, lastSegment.node_end.lon);
+                    latlng.weight = 10 + lastSegment.density_ste / 100;
+                    runData.push(latlng);
+
+                    if (runData.length > 0){                    
+                        var weightedPolyline = new L.WeightedPolyline(runData, {
+                            fill: true,
+                            fillColor: '#FF0000',
+                            fillOpacity: 0.4,
+                            stroke: false,
+                            dropShadow: false,
+                            gradient: true,
+                            weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
+                        });
+                        listOfPolyline[streetId] = weightedPolyline;
+                        weightedPolyline.addTo(mymap);
                     }
                 }
-            }
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown){
-            console.log('Error while loading density map');
+            });
         }
-    });  
+    }
+    xhr.send();
+
+
+    // $.ajax({
+    //     url: L.densityAPI, 
+    //     type: "get",
+    //     responseType:'arraybuffer',
+    //     data: {
+    //         streetIds: data
+    //     },
+    //     success: function(buffer){
+    //         console.log(typeof(buffer));
+    //         var data = DensityStreetsProtobuf.decode(buffer);
+
+    //         console.log(data);
+
+    //         // var streets = result;            
+    //         // for (var streetId in streets){
+    //         //     if (streets.hasOwnProperty(streetId)){
+    //         //         var segments = streets[streetId];
+
+    //         //         if (listOfPolyline.hasOwnProperty(streetId)){
+    //         //             var weightedPolyline = listOfPolyline[streetId];
+    //         //             var count = 0;
+    //         //             var lastSegment;
+    //         //             for (var segmentId in segments){
+    //         //                 if (segments.hasOwnProperty(segmentId)) {
+    //         //                     var segment = segments[segmentId];
+    //         //                     weightedPolyline._latlngs[count].weight = 10 + segment.density_ste / 100;
+    //         //                     lastSegment = segment;
+    //         //                     count++;
+    //         //                 }
+    //         //             }
+    //         //             var latlng = new L.LatLng(segment.node_end.lat, segment.node_end.lon);
+    //         //             latlng.weight = 10 + segment.density_ste / 100;
+
+    //         //             weightedPolyline.removeFrom(mymap);
+    //         //             var weightedPolyline = new L.WeightedPolyline(weightedPolyline._latlngs, {
+    //         //                     fill: true,
+    //         //                     fillColor: '#FF0000',
+    //         //                     fillOpacity: 0.4,
+    //         //                     stroke: false,
+    //         //                     dropShadow: false,
+    //         //                     gradient: true,
+    //         //                     weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
+    //         //                 });                       
+    //         //             weightedPolyline.addTo(mymap);
+    //         //             listOfPolyline[streetId] = weightedPolyline;
+    //         //         }else{
+    //         //             var runData = [];
+    //         //             var lastSegment;
+    //         //             for (var segmentId in segments){
+    //         //                 if (segments.hasOwnProperty(segmentId)) {
+    //         //                     var segment = segments[segmentId];
+    //         //                     var latlng = new L.LatLng(segment.node_start.lat, segment.node_start.lon);
+    //         //                     latlng.weight = 10 + segment.density_ste / 100;
+    //         //                     runData.push(latlng);
+    //         //                     lastSegment = segment;
+    //         //                 }          
+    //         //             }
+
+    //         //             var latlng = new L.LatLng(segment.node_end.lat, segment.node_end.lon);
+    //         //             latlng.weight = 10 + segment.density_ste / 100;
+    //         //             runData.push(latlng);
+
+    //         //             if (runData.length > 0){                    
+    //         //                 var weightedPolyline = new L.WeightedPolyline(runData, {
+    //         //                     fill: true,
+    //         //                     fillColor: '#FF0000',
+    //         //                     fillOpacity: 0.4,
+    //         //                     stroke: false,
+    //         //                     dropShadow: false,
+    //         //                     gradient: true,
+    //         //                     weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
+    //         //                 });
+    //         //                 listOfPolyline[streetId] = weightedPolyline;
+    //         //                 weightedPolyline.addTo(mymap);
+    //         //             }
+    //         //         }
+    //         //     }
+    //         // }
+    //     },
+    //     error: function(XMLHttpRequest, textStatus, errorThrown){
+    //         console.log('Error while loading density map');
+    //     }
+    // });  
 }
 
 
