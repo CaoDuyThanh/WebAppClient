@@ -20,15 +20,20 @@ export class MapComponent {
 		var leafletCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/leaflet.css');
 		var styleCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/style.css');
 		var leafletDvfCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/leaflet-dvf.css');
+		var leafletMarkerClusterCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/markercluster.css');
+		var leafletMarkerClusterDefaultCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/markercluster.default.css');
 		this.elementRef.nativeElement.appendChild(leafletCss);
 		this.elementRef.nativeElement.appendChild(styleCss);
 		this.elementRef.nativeElement.appendChild(leafletDvfCss);
+		this.elementRef.nativeElement.appendChild(leafletMarkerClusterDefaultCss);
+		this.elementRef.nativeElement.appendChild(leafletMarkerClusterCss);
 
 		// Load External Javascript
 		var jqueryTag = this.scriptHelper.CreateScriptTag('text/javascript', 'http://code.jquery.com/jquery-1.9.1.min.js');
-		var leafletTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.js');
+		var leafletTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet-src.js');
 		var leafletAjaxTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.ajax.min.js');
 		var leafletVectorgridTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.vectorgrid.bundled.js');
+		var leafletDvfMarkersClusterTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.markercluster-src.js');
 		var leafletDvfTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet-dvf.js');
 		var longTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/long.js');
 		var byteBufferTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/bytebuffer.js');
@@ -39,6 +44,7 @@ export class MapComponent {
 		this.elementRef.nativeElement.appendChild(leafletTag);
 		this.elementRef.nativeElement.appendChild(leafletAjaxTag);
 		this.elementRef.nativeElement.appendChild(leafletVectorgridTag);
+		this.elementRef.nativeElement.appendChild(leafletDvfMarkersClusterTag);
 		this.elementRef.nativeElement.appendChild(leafletDvfTag);
 		this.elementRef.nativeElement.appendChild(longTag);
 		this.elementRef.nativeElement.appendChild(byteBufferTag);
