@@ -36,7 +36,7 @@ var vectorOptions = {
     road: function LoadRoadDensity(properties, zoom) {
             if (properties.class == 'main' || properties.class == 'motorway'|| properties.class == 'path') {
                 groupRoads.push(properties.osm_id);
-                if (groupRoads.length >= 50){
+                if (groupRoads.length >= 10){
                     sendAjax(groupRoads);
                     groupRoads = [];
                 }
@@ -74,7 +74,7 @@ function autoLoadDensityMap(){
         vectorLayer.removeFrom(mymap);        
     }
     vectorLayer.addTo(mymap);
-    setTimeout(autoLoadDensityMap, 10000);
+    setTimeout(autoLoadDensityMap, 1000000);
 }
 autoLoadDensityMap();
 
@@ -83,7 +83,7 @@ autoLoadDensityMap();
  */
 // Load density of a group of roads
 var loadDensityGroupRoads = function(){
-    if (0 < groupRoads.length && groupRoads.length < 50){
+    if (0 < groupRoads.length && groupRoads.length < 10){
         sendAjax(groupRoads);
         groupRoads = [];
     }
@@ -94,12 +94,7 @@ loadDensityGroupRoads();
 // Create protobuffer handler
 var builder = protobuf.loadProtoFile('/app/map/streets.proto');
 var DensityStreetsProtobuf = builder.build("DensityStreets").DensityStreets;
- 
-
 var listOfPolyline = [];
-
-
-
 var sendAjax = function(data){
     var url = L.densityAPI;
     for (var idx = 0; idx < data.length; idx++){
@@ -176,92 +171,35 @@ var sendAjax = function(data){
         }
     }
     xhr.send();
-
-
-    // $.ajax({
-    //     url: L.densityAPI, 
-    //     type: "get",
-    //     responseType:'arraybuffer',
-    //     data: {
-    //         streetIds: data
-    //     },
-    //     success: function(buffer){
-    //         console.log(typeof(buffer));
-    //         var data = DensityStreetsProtobuf.decode(buffer);
-
-    //         console.log(data);
-
-    //         // var streets = result;            
-    //         // for (var streetId in streets){
-    //         //     if (streets.hasOwnProperty(streetId)){
-    //         //         var segments = streets[streetId];
-
-    //         //         if (listOfPolyline.hasOwnProperty(streetId)){
-    //         //             var weightedPolyline = listOfPolyline[streetId];
-    //         //             var count = 0;
-    //         //             var lastSegment;
-    //         //             for (var segmentId in segments){
-    //         //                 if (segments.hasOwnProperty(segmentId)) {
-    //         //                     var segment = segments[segmentId];
-    //         //                     weightedPolyline._latlngs[count].weight = 10 + segment.density_ste / 100;
-    //         //                     lastSegment = segment;
-    //         //                     count++;
-    //         //                 }
-    //         //             }
-    //         //             var latlng = new L.LatLng(segment.node_end.lat, segment.node_end.lon);
-    //         //             latlng.weight = 10 + segment.density_ste / 100;
-
-    //         //             weightedPolyline.removeFrom(mymap);
-    //         //             var weightedPolyline = new L.WeightedPolyline(weightedPolyline._latlngs, {
-    //         //                     fill: true,
-    //         //                     fillColor: '#FF0000',
-    //         //                     fillOpacity: 0.4,
-    //         //                     stroke: false,
-    //         //                     dropShadow: false,
-    //         //                     gradient: true,
-    //         //                     weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
-    //         //                 });                       
-    //         //             weightedPolyline.addTo(mymap);
-    //         //             listOfPolyline[streetId] = weightedPolyline;
-    //         //         }else{
-    //         //             var runData = [];
-    //         //             var lastSegment;
-    //         //             for (var segmentId in segments){
-    //         //                 if (segments.hasOwnProperty(segmentId)) {
-    //         //                     var segment = segments[segmentId];
-    //         //                     var latlng = new L.LatLng(segment.node_start.lat, segment.node_start.lon);
-    //         //                     latlng.weight = 10 + segment.density_ste / 100;
-    //         //                     runData.push(latlng);
-    //         //                     lastSegment = segment;
-    //         //                 }          
-    //         //             }
-
-    //         //             var latlng = new L.LatLng(segment.node_end.lat, segment.node_end.lon);
-    //         //             latlng.weight = 10 + segment.density_ste / 100;
-    //         //             runData.push(latlng);
-
-    //         //             if (runData.length > 0){                    
-    //         //                 var weightedPolyline = new L.WeightedPolyline(runData, {
-    //         //                     fill: true,
-    //         //                     fillColor: '#FF0000',
-    //         //                     fillOpacity: 0.4,
-    //         //                     stroke: false,
-    //         //                     dropShadow: false,
-    //         //                     gradient: true,
-    //         //                     weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
-    //         //                 });
-    //         //                 listOfPolyline[streetId] = weightedPolyline;
-    //         //                 weightedPolyline.addTo(mymap);
-    //         //             }
-    //         //         }
-    //         //     }
-    //         // }
-    //     },
-    //     error: function(XMLHttpRequest, textStatus, errorThrown){
-    //         console.log('Error while loading density map');
-    //     }
-    // });  
 }
+
+
+/**
+ * LOAD MAP CAMERA
+ */
+var cameraLayer = new L.MarkerClusterGroup();
+function loadCamera(){
+    var xhr = new XMLHttpRequest();
+    xhr.open('get', L.cameraAPI, true);
+    xhr.overrideMimeType("application/json");
+    xhr.onload = function(){
+        var trafficPoles = JSON.parse(xhr.responseText);
+
+        trafficPoles.forEach(function(trafficPole){
+            cameraMarker = new L.SVGMarker(
+                new L.LatLng(trafficPole.lat, trafficPole.lon), {
+                    svg: "/assets/img/camera.svg",
+                    size: new L.Point(50, 50)
+                });            
+            cameraLayer.addLayer(cameraMarker);
+        });
+        cameraLayer.addTo(mymap, true);        
+    }
+    xhr.send();
+}
+loadCamera();
+
+
 
 
 /**
@@ -286,13 +224,13 @@ legend.addTo(mymap);
  * CREATE POP UP WHEN CLICK ON MAP
  * @type {[type]}
  */
-// var popup = L.popup();
-// function onMapClick(e) {
-//     popup.setLatLng(e.latlng)
-//          .setContent("You clicked the map at " + e.latlng.toString())
-//          .openOn(mymap);
-// }
-// mymap.on('click', onMapClick);
+var popup = L.popup();
+function onMapClick(e) {
+    popup.setLatLng(e.latlng)
+         .setContent("You clicked the map at " + e.latlng.toString())
+         .openOn(mymap);
+}
+mymap.on('click', onMapClick);
 
 
 /**
@@ -312,13 +250,7 @@ var rasterDisplayLayer = {
 };
 var vectorDisplayLayer = {
     "Density layer": vectorLayer,
+    "Camera layer": cameraLayer
 };
 var layerControl = L.control.layers(rasterDisplayLayer, vectorDisplayLayer).addTo(mymap);
 mymap.setView(L.defaultView, L.defaultZoom);
-
-
-
-
-
-
-
