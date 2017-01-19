@@ -6,7 +6,9 @@ L.attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMa
 L.vectorUrl = 'https://{s}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6/{z}/{x}/{y}.vector.pbf?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw';
 L.defaultView = [10.7686, 106.6619];
 L.defaultZoom = 16;
-L.densityAPI = "http://192.168.1.107:4000/density/streets/";
+L.densityAPI = "http://192.168.1.107:4000/density/streetspbf/";
+L.cameraAPI = "http://192.168.1.107:4000/simulation/alltrafficpoles/";
+L.cameraSize = {width: 50, height:50};
 L.color = new Array();
 L.timeIterval = 1000;
 
