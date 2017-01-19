@@ -14,7 +14,7 @@ var rasterOption = {
     attribution: L.attribution,
     id: L.mapId
 }
-var rasterLayer = L.tileLayer(L.rasterUrl, rasterOption);
+var rasterLayer = L.tileLayer(MAPCONFIG.RASTER_URL, rasterOption);
 rasterLayer.addTo(mymap);
 
 
@@ -60,7 +60,7 @@ var vectorGridOptions = {
     rendererFactory: L.canvas.tile,
     vectorTileLayerStyles: vectorOptions,
 };
-var vectorLayer = L.vectorGrid.protobuf(L.vectorUrl, vectorGridOptions);
+var vectorLayer = L.vectorGrid.protobuf(MAPCONFIG.VECTOR_URL, vectorGridOptions);
 vectorLayer.addTo(mymap);
 
 
@@ -74,7 +74,7 @@ function autoLoadDensityMap(){
         vectorLayer.removeFrom(mymap);        
     }
     vectorLayer.addTo(mymap);
-    setTimeout(autoLoadDensityMap, 1000000);
+    setTimeout(autoLoadDensityMap, MAPCONFIG.RELOAD_DENSITY);
 }
 autoLoadDensityMap();
 
@@ -96,7 +96,7 @@ var builder = protobuf.loadProtoFile('/app/map/streets.proto');
 var DensityStreetsProtobuf = builder.build("DensityStreets").DensityStreets;
 var listOfPolyline = [];
 var sendAjax = function(data){
-    var url = L.densityAPI;
+    var url = MAPCONFIG.DENSITY_API;
     for (var idx = 0; idx < data.length; idx++){
         if (url.indexOf('?') === -1){
             url = url + "?streetIds[]=" + data[idx];
@@ -180,7 +180,7 @@ var sendAjax = function(data){
 var cameraLayer = new L.MarkerClusterGroup();
 function loadCamera(){
     var xhr = new XMLHttpRequest();
-    xhr.open('get', L.cameraAPI, true);
+    xhr.open('get', MAPCONFIG.CAMERA_API, true);
     xhr.overrideMimeType("application/json");
     xhr.onload = function(){
         var trafficPoles = JSON.parse(xhr.responseText);
@@ -212,8 +212,11 @@ legend.onAdd = function () {
     div.innerHTML += '<p>Transit Status</p>';
     for (var i = 0; i <= 6; i++) {
         div.innerHTML +=
-            '<i style="background:' + L.getColor(i+"") + '"></i> ' +
-            L.transitStatus[i] + '<br>';
+            '<i style="background:' + MAPCONFIG.TRANSIT_STATUS[i].color + '"></i> ' +
+
+            MAPCONFIG.TRANSIT_STATUS[i].display + '<br>';
+        console.log(MAPCONFIG.TRANSIT_STATUS[i].color);
+        console.log(MAPCONFIG.TRANSIT_STATUS[i].display);
     }
     return div;
 };
@@ -253,4 +256,4 @@ var vectorDisplayLayer = {
     "Camera layer": cameraLayer
 };
 var layerControl = L.control.layers(rasterDisplayLayer, vectorDisplayLayer).addTo(mymap);
-mymap.setView(L.defaultView, L.defaultZoom);
+mymap.setView(MAPCONFIG.DEFAULT_VIEW, MAPCONFIG.DEFAULT_ZOOM);
