@@ -79,7 +79,7 @@ function autoLoadDensityMap(){
 autoLoadDensityMap();
 
 /**
- * REQUEST - RESPONE HANDLER
+ * LOAD DENSITY
  */
 // Load density of a group of roads
 var loadDensityGroupRoads = function(){
@@ -92,6 +92,7 @@ var loadDensityGroupRoads = function(){
 loadDensityGroupRoads();
 
 // Create protobuffer handler
+var densityLayer = L.layerGroup();
 var builder = protobuf.loadProtoFile('/app/map/streets.proto');
 var DensityStreetsProtobuf = builder.build("DensityStreets").DensityStreets;
 var listOfPolyline = [];
@@ -126,7 +127,8 @@ var sendAjax = function(data){
                     var latlng = new L.LatLng(lastSegment.node_end.lat, lastSegment.node_end.lon);
                     latlng.weight = 10 + lastSegment.density_ste / 100;
 
-                    weightedPolyline.removeFrom(mymap);
+                    densityLayer.removeLayer(weightedPolyline);
+                    // weightedPolyline.removeFrom(mymap);
                     var weightedPolyline = new L.WeightedPolyline(weightedPolyline._latlngs, {
                             fill: true,
                             fillColor: '#FF0000',
@@ -135,8 +137,9 @@ var sendAjax = function(data){
                             dropShadow: false,
                             gradient: true,
                             weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
-                        });                       
-                    weightedPolyline.addTo(mymap);
+                        });
+                    densityLayer.addLayer(weightedPolyline);
+                    // weightedPolyline.addTo(mymap);
                     listOfPolyline[streetId] = weightedPolyline;
                 }else{
                     var runData = [];
@@ -164,7 +167,8 @@ var sendAjax = function(data){
                             weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
                         });
                         listOfPolyline[streetId] = weightedPolyline;
-                        weightedPolyline.addTo(mymap);
+                        // weightedPolyline.addTo(mymap);
+                        densityLayer.addLayer(weightedPolyline);
                     }
                 }
             });
@@ -172,6 +176,7 @@ var sendAjax = function(data){
     }
     xhr.send();
 }
+densityLayer.addTo(mymap);
 
 
 /**
@@ -252,7 +257,7 @@ var rasterDisplayLayer = {
     "Raster layer": rasterLayer
 };
 var vectorDisplayLayer = {
-    "Density layer": vectorLayer,
+    "Density layer": densityLayer,
     "Camera layer": cameraLayer
 };
 var layerControl = L.control.layers(rasterDisplayLayer, vectorDisplayLayer).addTo(mymap);
