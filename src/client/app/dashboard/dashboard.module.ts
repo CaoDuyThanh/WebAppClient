@@ -5,6 +5,8 @@ import { DropdownModule } from 'ng2-bootstrap/ng2-bootstrap';
 import { ModalModule } from 'ng2-bootstrap/ng2-bootstrap';
 
 import { HomeModule } from './home/home.module';
+import { MapSettingsModule } from './map-settings/map-settings.module';
+import { CameraSettingsModule } from './camera-settings/camera-settings.module';
 import { ChartModule } from './charts/chart.module';
 import { BlankPageModule } from './blank-page/blankPage.module';
 import { TableModule } from './tables/table.module';
@@ -26,6 +28,8 @@ import {SidebarComponent} from '../shared/index';
     	DropdownModule,
         ModalModule,
     	HomeModule,
+        MapSettingsModule,
+        CameraSettingsModule,
         ChartModule,
         TableModule,
         FormModule,

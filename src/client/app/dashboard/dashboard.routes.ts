@@ -1,6 +1,8 @@
 import { Route } from '@angular/router';
 
 import { HomeRoutes } from './home/index';
+import { MapSettingsRoutes } from './map-settings/index';
+import { CameraSettingsRoutes } from './camera-settings/index';
 import { ChartRoutes } from './charts/index';
 import { BlankPageRoutes } from './blank-page/index';
 import { TableRoutes } from './tables/index';
@@ -17,13 +19,15 @@ export const DashboardRoutes: Route[] = [
     	component: DashboardComponent,
     	children: [
 	    	...HomeRoutes,
+            ...MapSettingsRoutes,
+            ...CameraSettingsRoutes,
 	    	...ChartRoutes,
 	    	...BSComponentRoutes,
-        ...TableRoutes,
+            ...TableRoutes,
 	    	...BlankPageRoutes,
-        ...FormRoutes,
-        ...GridRoutes,
-        ...BSElementRoutes
+            ...FormRoutes,
+            ...GridRoutes,
+            ...BSElementRoutes
     	]
   	}
 ];
