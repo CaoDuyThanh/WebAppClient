@@ -35,7 +35,7 @@ export class Camera{
 		this.AngleZ 	= obj && obj.AngleZ || null;
 		this.Fov 		= obj && obj.Fov || null;
 		this.StreamId 	= obj && obj.StreamId || null;
-		this.Roads 		= obj && obj.Roads || null;
+		this.Roads 		= obj && obj.Roads || [];
 	}
 
 	ToJSON(): any{
@@ -75,7 +75,7 @@ export class TrafficPole{
 		this.Name 	= obj && obj.Name || null;
 		this.PoleAngle = obj && obj.PoleAngle || null;
 		this.Type 	= obj && obj.Type || null;
-		this.Cameras = obj && obj.Cameras || null;
+		this.Cameras = obj && obj.Cameras || [];
 	}
 
 	ToJSON(): any{
