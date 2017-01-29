@@ -24,7 +24,9 @@
                 Traffic poles settings
 
                 <!-- Create Button (start) -->
-                <div style="float: right;"><button class="btn btn-primary"><i class="fa fa-plus-circle"></i> &nbsp; Create</button></div>
+                <div style="float: right;" data-toggle="modal" data-target="#ShowCreateTrafficPole">
+                    <button class="btn btn-primary" (click)="ClickCreate()"><i class="fa fa-plus-circle"></i> &nbsp; Create</button>
+                </div>
                 <!-- Create Button (end) -->
 
                 <!-- Action Button (start) -->
@@ -70,8 +72,10 @@
                     <td><div data-toggle="modal" data-target="#ShowTrafficPoleInfo" (click)="ShowTrafficPoleInfo(trafficPole)">{{ trafficPole.Lon }}</div></td>
                     <td><div data-toggle="modal" data-target="#ShowTrafficPoleInfo" (click)="ShowTrafficPoleInfo(trafficPole)">{{ trafficPole.Type }}</div></td>
                     <td>
-                        <a class="btn btn-primary">Edit</a>
-                        <a class="btn btn-danger" (click)="ClickDelete(trafficPole.PoleId)" data-toggle="modal" data-target="#DeleteModal">Delete</a>
+                        <!-- Edit button -->
+                        <a data-toggle="modal" data-target="#ShowCreateTrafficPole" class="btn btn-primary" (click)="ClickEdit(trafficPole)" >Edit</a>
+                        <!-- Delete Button -->
+                        <a  data-toggle="modal" data-target="#DeleteModal" class="btn btn-danger" (click)="ClickDelete(trafficPole.PoleId)">Delete</a>
                     </td>
                 </tr>
             </tbody>
@@ -143,8 +147,24 @@
                 </div>                            
             </div>
         </div>
-    </div>                
+    </div>
     <!-- Show Trafficpole Information Modal (End) -->                
 
-
+    <!-- Show create traffic pole Modal (start) -->
+    <div class="modal fade" id="ShowCreateTrafficPole" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create new traffic pole</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div #TrafficPoleModalContainer></div>                    
+                </div>                            
+            </div>
+        </div>
+    </div>                
+    <!-- Show create traffic pole Modal (end) -->
 </div>
