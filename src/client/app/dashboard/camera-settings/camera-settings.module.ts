@@ -6,6 +6,11 @@ import { RouterModule } from '@angular/router';
 
 import { CameraSettingsComponent } from './camera-settings.component';
 
+// Import sub Component
+import { TrafficPoleEdit } from './sub-component/traffic-pole-edit.component';
+import { CameraEdit } from './sub-component/camera-edit.component';
+import { LatlonEdit } from './sub-component/latlon-edit.component';
+
 @NgModule({
     imports: [
         BrowserModule,
@@ -13,7 +18,11 @@ import { CameraSettingsComponent } from './camera-settings.component';
     	HttpModule,
     ],
     declarations: [
-    	CameraSettingsComponent
+    	CameraSettingsComponent,
+    	TrafficPoleEdit,
+    	CameraEdit,
+    	LatlonEdit
+
     ],
     exports: [CameraSettingsComponent]
 })
