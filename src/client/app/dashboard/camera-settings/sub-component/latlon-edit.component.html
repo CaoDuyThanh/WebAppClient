@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-md-12">
+        <form class="form-horizontal" role="form">
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <label for="inputEmail3" class="control-label">Lat <br>
+                    </label>
+                </div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputEmail3" placeholder="lat" value="{{ Latlon.Lat }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <label for="inputEmail3" class="control-label">Lon <br>
+                    </label>
+                </div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputEmail3" placeholder="lon" value="{{ Latlon.Lon}}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-offset-2 col-sm-5">
+                    <button *ngIf="!IsEdit" type="submit" class="btn btn-primary">Create</button>
+                    <button *ngIf="IsEdit" type="submit" class="btn btn-primary">Edit</button>
+                    <button type="submit" class="btn btn-default">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
