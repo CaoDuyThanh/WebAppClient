@@ -346,6 +346,7 @@ export class SeedConfig {
       '@angular/router/testing': 'node_modules/@angular/router/bundles/router-testing.umd.js',
 
       'angular2-highcharts': 'node_modules/angular2-highcharts/index.js',  // ADD NODE_MODULE HERE
+      'ng2-typeahead': 'node_modules/ng2-typeahead',                       // ADD NODE_MODULE HERE
 
       'rxjs/*': 'node_modules/rxjs/*',
       'app/*': '/app/*',
@@ -421,6 +422,10 @@ export class SeedConfig {
         main: 'index.js',
         defaultExtension: 'js'
       },
+      'ng2-typeahead':       {    // ADD NODE_MODULE HERE
+        main: 'ng2-typeahead.js', 
+        defaultExtension: 'js' 
+      },    
       'rxjs': {
         main: 'Rx.js',
         defaultExtension: 'js'
