@@ -6,18 +6,18 @@ import { Component, OnInit, Injector, QueryList,
 import { TrafficPole, Camera, LatLon } from '../../../service/models/CameraModel';
 
 // Import Component
-import { CameraEdit } from './camera-edit.component';
+import { CameraEditComponent } from './camera-edit.component';
 
 @Component({
     moduleId: module.id,
 	selector: 'traffic-pole-edit-cmp',
 	templateUrl: 'traffic-pole-edit.component.html',
     entryComponents: [
-        CameraEdit
+        CameraEditComponent
     ]
 })
 
-export class TrafficPoleEdit {
+export class TrafficPoleEditComponent {
 	public TrafficPole: TrafficPole;
 	public IsEdit: boolean;
 
@@ -51,7 +51,7 @@ export class TrafficPoleEdit {
         let injector = ReflectiveInjector.fromResolvedProviders(resolveData, this.CameraContainer.toArray()[idx].parentInjector);
 
         // Create component
-        let factory = this.resolver.resolveComponentFactory(CameraEdit);
+        let factory = this.resolver.resolveComponentFactory(CameraEditComponent);
         let component = factory.create(injector);
 
         // Add component to modal
