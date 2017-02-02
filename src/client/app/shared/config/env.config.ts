@@ -7,6 +7,10 @@ export interface EnvConfig {
 
 	HOST_CAMERA_API?: string;
 
+	HOST_QUICKSEARCH_API?: string;	
+
+	HOST_STATISTIC_API?: string;
+
   	API?: string;
   	ENV?: string;
 }
