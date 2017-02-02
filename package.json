@@ -138,6 +138,8 @@
     "@angular/platform-browser": "2.0.0",
     "@angular/platform-browser-dynamic": "2.0.0",
     "@angular/router": "3.0.0",
+    "angular2-highcharts": "^0.4.1",
+    "bootstrap-timepicker": "^0.5.2",
     "core-js": "2.4.0",
     "es-module-loader": "1.0.0",
     "font-awesome": "4.6.3",
