@@ -345,6 +345,8 @@ export class SeedConfig {
         'node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic-testing.umd.js',
       '@angular/router/testing': 'node_modules/@angular/router/bundles/router-testing.umd.js',
 
+      'angular2-highcharts': 'node_modules/angular2-highcharts/index.js',  // ADD NODE_MODULE HERE
+
       'rxjs/*': 'node_modules/rxjs/*',
       'app/*': '/app/*',
       // For test config
@@ -412,6 +414,10 @@ export class SeedConfig {
         defaultExtension: 'js'
       },
       '@angular/router': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
+      'angular2-highcharts': {    // ADD NODE_MODULE HERE
         main: 'index.js',
         defaultExtension: 'js'
       },
