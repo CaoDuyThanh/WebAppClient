@@ -5,6 +5,8 @@ const BaseConfig: EnvConfig = {
 
 	HOST_DENSITY_API: 'http://localhost:4000/density',
 
+	HOST_STREETS_API: 'http://localhost:4000/streets',
+
 	HOST_CAMERA_API: 'http://localhost:4000/simulation',
 
 	HOST_QUICKSEARCH_API: 'http://localhost:4000/quicksearch',
