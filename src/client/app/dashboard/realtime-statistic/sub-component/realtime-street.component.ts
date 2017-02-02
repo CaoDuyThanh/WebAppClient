@@ -2,6 +2,9 @@ import { Component, OnInit, Injector, ElementRef, EventEmitter } from '@angular/
 import { Observable } from 'rxjs';
 import { CSSHelper } from '../../../utils/css.helper';
 
+// Import module
+import { Typeahead } from 'ng2-typeahead';
+
 // Import Service
 import { StreetService } from '../../../service/street-service';
 
@@ -16,11 +19,16 @@ import { StreetService } from '../../../service/street-service';
 
 export class RealtimeStreetComponent implements OnInit{
     // CONSTANT
-    private NUM_ITEMS: number = 5;
+    private NUM_ITEMS: number = 10;
 
     public ComponentId: string;
 
-    private suggestSearch: string[];
+    // Search component
+    private searchStr: string;
+    private suggestSearch: any[];
+    private selectedSearch: any;
+    private streetSearch: any[];
+    
     private chartOptions: any;
     private chart:any;
 
@@ -50,6 +58,8 @@ export class RealtimeStreetComponent implements OnInit{
         // Add Css
         var bootstrapTimepicker = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/bootstrap-timepicker.css');
         this.element.nativeElement.appendChild(bootstrapTimepicker);
+        var customStyle = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/custom-style.css');
+        this.element.nativeElement.appendChild(customStyle);
 
         // Create event for search input
         this.createSearchEvent();
@@ -63,6 +73,10 @@ export class RealtimeStreetComponent implements OnInit{
     onTimeUpdateChange(timeUpdate: number): void{
         this.timeUpdate = timeUpdate;
     }
+
+    suggestSearchSelected(suggestSearch: any) {
+        this.searchStr = suggestSearch ? suggestSearch.name : 'none';
+    }
     
     createSearchEvent(): void{
         Observable.fromEvent(this.element.nativeElement, 'keyup')
@@ -73,8 +87,12 @@ export class RealtimeStreetComponent implements OnInit{
             .switch()
             .subscribe(
                 (results: any) => {
-                    this.suggestSearch = results;
-                    console.log(this.suggestSearch);
+                    this.suggestSearch = results.map((result: any) => {
+                        return {
+                            name: result,
+                            searchText: result   
+                        }
+                    });
                 },
                 (err: any) => {
                     console.log(err);
@@ -86,6 +104,7 @@ export class RealtimeStreetComponent implements OnInit{
 
     createTimepickerFromDiv(): void{
         var timePickerDiv:any = $('#'+this.ComponentId+'_fromdiv');
+        console.log(timePickerDiv);
         timePickerDiv.timepicker();
     }
 
@@ -104,7 +123,7 @@ export class RealtimeStreetComponent implements OnInit{
                 type: this.viewType == "LineGraph" ? 'spline' : 'spline'
             },
             title: {
-                text: 'Number of vehicles at some street'
+                text: 'Number of vehicles at some streets'
             },
             subtitle: {
                 text: ''
@@ -129,7 +148,7 @@ export class RealtimeStreetComponent implements OnInit{
             },
             tooltip: {
                 headerFormat: '<b>{series.name}</b><br>',
-                pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+                pointFormat: '{point.x:%e. %b}: {point.y:.2f} vehicle(s)'
             },
             plotOptions: {
                 spline: {
@@ -142,8 +161,28 @@ export class RealtimeStreetComponent implements OnInit{
         };
     }
 
-    ClickAddRoad(searchString: any): void{
-        this.listRoads.push(searchString);
+    ClickSearchRoad(): void{
+        var searchDiv: any = $('#' + this.ComponentId + '_typeahead' + ' .typeahead-input');
+        this.searchStr = searchDiv.val();
+        (this.streetService.SearchStreets(this.searchStr))
+            .subscribe((results: any[]) => {
+                    this.streetSearch = results;
+                },
+                (err: any) => {
+                    console.log(err);
+                },
+                () => {}
+            )
+    }
+
+    ClickDelete(streetName: string): void{
+        this.listRoads.splice(this.listRoads.indexOf(streetName), 1);
+    }
+
+    ClickAddRoad(streetName: string): void{
+        if (this.listRoads.indexOf(streetName) < 0){
+            this.listRoads.push(streetName);
+        }
     }
 
     ClickViewGraph(): void{
@@ -165,9 +204,24 @@ export class RealtimeStreetComponent implements OnInit{
                 var streetName = this.listRoads[idx];
                 (this.streetService.GetNumVehiclesStreet(streetName))
                     .subscribe(
-                        (result: number) => {
+                        (result: any) => {
                             console.log(result);
-                            this.chart.series[idx].addPoint([Date.now(), result]);
+                            console.log(result.utc_time);
+                            var dataLength = this.chart.series[idx].data.length;
+                            if (dataLength == 0){
+                                this.chart.series[idx].addPoint([result.utc_time, result.num_vehicles]);
+                            }else{
+                                var oldUTC = this.chart.series[idx].data[dataLength - 1].x;    
+                                console.log(this.chart.series[idx].data);
+                                console.log(this.chart.series[idx].data[dataLength - 1]);
+
+                                console.log(oldUTC);
+                                if (oldUTC < result.utc_time){
+                                    this.chart.series[idx].addPoint([result.utc_time, result.num_vehicles]);
+                                }
+                            }
+                            
+                            
                         },
                         (err: any) => {
                             console.log(err);
