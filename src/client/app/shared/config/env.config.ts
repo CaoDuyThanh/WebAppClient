@@ -5,6 +5,8 @@ export interface EnvConfig {
 
 	HOST_DENSITY_API?: string;
 
+	HOST_STREETS_API?: string;
+
 	HOST_CAMERA_API?: string;
 
 	HOST_QUICKSEARCH_API?: string;	
