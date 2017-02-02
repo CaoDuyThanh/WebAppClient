@@ -9,7 +9,7 @@ import { TrafficPole, Camera, LatLon } from '../../../service/models/CameraModel
 	templateUrl: 'latlon-edit.component.html'
 })
 
-export class LatlonEdit {
+export class LatlonEditComponent {
 	public Latlon: LatLon;
 	public IsEdit: boolean;
 
