@@ -11,14 +11,14 @@ import { CameraService } from '../../service/camera-service';
 import { TrafficPole, Camera, LatLon } from '../../service/models/CameraModel';
 
 // Import Component
-import { TrafficPoleEdit } from './sub-component/traffic-pole-edit.component';
+import { TrafficPoleEditComponent } from './sub-component/traffic-pole-edit.component';
 
 @Component({
     moduleId: module.id,
 	selector: 'camera-settings-cmp',
 	templateUrl: 'camera-settings.component.html',
     entryComponents: [
-        TrafficPoleEdit
+        TrafficPoleEditComponent
     ],
     providers: [
         CameraService
@@ -164,7 +164,7 @@ export class CameraSettingsComponent implements OnInit {
         let injector = ReflectiveInjector.fromResolvedProviders(resolveData, this.TrafficPoleModalContainer.parentInjector);
 
         // Create component
-        let factory = this.resolver.resolveComponentFactory(TrafficPoleEdit);
+        let factory = this.resolver.resolveComponentFactory(TrafficPoleEditComponent);
         let component = factory.create(injector);
 
         // Add component to modal
@@ -187,7 +187,7 @@ export class CameraSettingsComponent implements OnInit {
         let injector = ReflectiveInjector.fromResolvedProviders(resolveData, this.TrafficPoleModalContainer.parentInjector);
 
         // Create component
-        let factory = this.resolver.resolveComponentFactory(TrafficPoleEdit);
+        let factory = this.resolver.resolveComponentFactory(TrafficPoleEditComponent);
         let component = factory.create(injector);
 
         // Add component to modal

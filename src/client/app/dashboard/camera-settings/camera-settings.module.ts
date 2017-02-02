@@ -7,9 +7,9 @@ import { RouterModule } from '@angular/router';
 import { CameraSettingsComponent } from './camera-settings.component';
 
 // Import sub Component
-import { TrafficPoleEdit } from './sub-component/traffic-pole-edit.component';
-import { CameraEdit } from './sub-component/camera-edit.component';
-import { LatlonEdit } from './sub-component/latlon-edit.component';
+import { TrafficPoleEditComponent } from './sub-component/traffic-pole-edit.component';
+import { CameraEditComponent } from './sub-component/camera-edit.component';
+import { LatlonEditComponent } from './sub-component/latlon-edit.component';
 
 @NgModule({
     imports: [
@@ -19,9 +19,9 @@ import { LatlonEdit } from './sub-component/latlon-edit.component';
     ],
     declarations: [
     	CameraSettingsComponent,
-    	TrafficPoleEdit,
-    	CameraEdit,
-    	LatlonEdit
+    	TrafficPoleEditComponent,
+    	CameraEditComponent,
+    	LatlonEditComponent
 
     ],
     exports: [CameraSettingsComponent]
