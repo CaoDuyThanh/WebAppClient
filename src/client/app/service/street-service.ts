@@ -26,7 +26,7 @@ export class StreetService{
             });
 	}
 
-	GetNumVehiclesStreet(streetName: string): Observable<number>{
+	GetNumVehiclesStreet(streetName: string): Observable<any>{
 		let params: string = [
 			`street_name=${streetName}`,
 		].join('&');
@@ -34,14 +34,30 @@ export class StreetService{
 		return this.http.get(queryUrl)
             .map((res: Response) => {
                 let result = res.json();
-                console.log(result);
                 if (result.status == "success"){
-                	return result.data.num_vehicles;
+                	return result.data;
                 }else{
                 	console.log(result.message);
                 	return 0;
                 }                
             });		
 	}
+
+    SearchStreets(streetName: string): Observable<any[]>{
+        let params: string = [
+            `street_name=${streetName}`
+        ].join('&');
+        let queryUrl = Config.HOST_STREETS_API + '?' + params;
+        return this.http.get(queryUrl)
+            .map((res: Response) => {
+                let result = res.json();
+                if (result.status == "success"){
+                    return result.data;
+                }else{
+                    console.log(result.message);
+                    return [];
+                }                
+            });
+    }
 }
 
