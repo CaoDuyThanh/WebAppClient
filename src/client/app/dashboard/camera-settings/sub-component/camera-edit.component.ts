@@ -6,18 +6,18 @@ import { Component, OnInit, Injector, QueryList,
 import { TrafficPole, Camera, LatLon } from '../../../service/models/CameraModel';
 
 // Import Component
-import { LatlonEdit } from './latlon-edit.component';
+import { LatlonEditComponent } from './latlon-edit.component';
 
 @Component({
     moduleId: module.id,
 	selector: 'camera-edit-cmp',
 	templateUrl: 'camera-edit.component.html',
     entryComponents: [
-        LatlonEdit
+        LatlonEditComponent
     ]
 })
 
-export class CameraEdit {
+export class CameraEditComponent {
 	public CameraIdx: number;
 	public Camera: Camera;
 	public IsEdit: boolean;
@@ -51,7 +51,7 @@ export class CameraEdit {
         let injector = ReflectiveInjector.fromResolvedProviders(resolveData, this.LatlonContainer.toArray()[idx].parentInjector);
 
         // Create component
-        let factory = this.resolver.resolveComponentFactory(LatlonEdit);
+        let factory = this.resolver.resolveComponentFactory(LatlonEditComponent);
         let component = factory.create(injector);
 
         // Add component to modal
