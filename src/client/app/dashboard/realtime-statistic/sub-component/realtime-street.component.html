@@ -5,23 +5,44 @@
 		<div class="col-md-8">
 			<div class="input-group">
 				<span class="input-group-addon" id="basic-addon1">Search road</span>
-				<input #searchbar type="text" class="form-control" placeholder="Search road name..." aria-describedby="basic-addon1" list="SearchOption"/>
-				<datalist id="SearchOption">
-					<option *ngFor="let str of suggetSearch" value="{{ str }}"></option>
-				</datalist>
+				<typeahead id="{{ComponentId}}_typeahead" class="form-control" style="margin: 0px; 
+													   padding-top: 0px;
+													   padding-bottom: 0px;"
+					[(ngModel)]="selectedSearch"
+					[list]="suggestSearch"
+					[searchProperty]="'searchText'" [displayProperty]="'name'"
+					[maxSuggestions]="5"
+					(suggestionSelected)="suggestSearchSelected($event)"
+					placeholder="Search road name...">
+				</typeahead>
 			</div>
 		</div>
 		<!-- Add road button -->
 		<div class="col-md-4">
-			<div class="btn btn-primary" style="float:right" (click)="ClickAddRoad(searchbar.value)">Add road</div>
+			<div style="float: right;" data-toggle="modal" [attr.data-target]="'#' + ComponentId + '_ShowSearchStreet'">
+                <div class="btn btn-primary" style="float:right" (click)="ClickSearchRoad()">Search road</div>
+            </div>
 		</div>
 	</div>
 	<!-- First row (start) -->
 	<br>
+
 	<!-- Second row (start) -->
 	<div class="row">
+		<div class="col-xl-6 input-group" style="margin-bottom: 10px;" *ngFor="let street of listRoads">
+			<span class="form-control">{{ street }}</span>
+			<span class="input-group-btn">
+				<div class="btn btn-danger" style="float: right" (click)="ClickDelete(street)">Del</div>
+			</span>
+		</div>
+	</div>
+	<!-- Second row (end) -->
+	<br>
+
+	<!-- Third row (start) -->
+	<div class="row">
+		<!-- Timepicker -->
 		<div class="col-md-6">
-			
 	        <div class="input-group bootstrap-timepicker timepicker">
 	        	<span class="input-group-addon" id="basic-addon1">From</span>				
 	            <input id="{{ComponentId}}_fromdiv" type="text" class="form-control input-small">
@@ -29,7 +50,7 @@
         	</div>
 		</div>
 
-		<!-- Graph view dropdown (start) -->
+		<!-- Graph view dropdown -->
 		<div class="col-md-6">
 			<div style="float:right" class="dropdown">
 				<span class="" id="basic-addon1">View type </span>
@@ -39,15 +60,14 @@
 				</select>
 			</div>
 		</div>
-		<!-- Graph view dropdown (end) -->
-
 	</div>
-	<!-- Second row (end) -->
+	<!-- Third row (end) -->	
 	<br>
-	<!-- Third row (start) -->
+
+	<!-- Four row (start) -->
 	<div class="row">
+		<!-- Time update dropdown -->
 		<div class="col-md-6">
-			<!-- Time update dropdown (start) -->
 			<span class="" id="basic-addon1">Time update </span>
 			<select id="{{ComponentId}}_ViewType" class="custom-select" (change)="onTimeUpdateChange($event.target.value)">
 				<option value="5000" selected>5 seconds</option>
@@ -58,19 +78,51 @@
 				<option value="120000">2 minutes</option>
 				<option value="300000">5 minutes</option>
 			</select>	
-			<!-- Time update dropdown (end) -->			
 		</div>
+
+		<!-- Reset and Viewgraph button -->
 		<div class="col-md-6">
 			<div style="float:right" class="btn btn-primary" (click)="ClickViewGraph()">View graph</div>
 			<div style="float:right; margin-right: 20px" class="btn btn-primary" (click)="ClickReset()">Reset</div>
 		</div>
 	</div>
-	<!-- Third row (end) -->	
+	<!-- Four row (end) -->
 	<br>
-	<!-- Four row (start) -->
+
+	<!-- Fifth row (start) -->
 	<div class="row">
 		<chart style="display: block;" [options]="chartOptions" (load)="SaveChart($event.context)"></chart>
-        <!-- <div id="{{ComponentId}}_statistic" style=""></div> -->
 	</div>
-	<!-- Four row (end) -->
+	<!-- Fifth row (end) -->
+
+
+	<!-- Show search street Modal (start) -->
+    <div class="modal fade" id="{{ComponentId}}_ShowSearchStreet" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Search street results</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+			            <tbody>
+			                <tr *ngFor="let street of streetSearch; let idx=index; let even = even; let odd = odd" [ngClass]="{'table-active': odd}">
+			                    <td style="width: 80%">
+			                        {{ street.street_name }}
+			                    </td>                   
+			                    <td style="width: 20%">
+			                        <!-- Add Button -->                        
+			                        <div class="btn btn-primary" (click)="ClickAddRoad(street.street_name)">Add</div>
+			                    </td>
+			                </tr>
+			            </tbody>
+			        </table>
+                </div>                            
+            </div>
+        </div>
+    </div>                
+	<!-- Show search street Modal (end) -->
 </div>
