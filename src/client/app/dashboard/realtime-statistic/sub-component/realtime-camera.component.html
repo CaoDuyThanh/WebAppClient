@@ -1,0 +1,88 @@
+<div class="container">
+	<!-- First row (start) -->
+	<div class="row ">
+		<!-- Show traffic pole -->
+		<div class="col-xl-6">
+			<div class="input-group">
+				<span class="input-group-addon" id="basic-addon1">Traffic pole name:</span>
+				<span class="form-control" style="background-color: #FFFFFF">{{ Camera.Parent.Name }}</span>
+			</div>
+		</div>
+		<!-- Show camera -->
+		<div class="col-xl-6">
+			<div class="input-group">
+				<span class="input-group-addon" id="basic-addon1">Camera Id</span>
+				<span class="form-control" style="background-color: #FFFFFF">Camera</span>
+			</div>
+		</div>
+	</div>
+	<!-- First row (start) -->
+	<br>
+
+	<!-- Second row (start) -->
+	<div class="row">
+		<!-- Show camera stream -->
+		<iframe width="100%" height="400"
+			src="https://www.youtube.com/embed/XGSy3_Czz8k">
+		</iframe> 
+	</div>
+	<!-- Second row (end) -->
+	<br>
+
+	<!-- Third row (start) -->
+	<div class="row">
+		<!-- Timepicker -->
+		<div class="col-md-6">
+	        <div class="input-group bootstrap-timepicker timepicker">
+	        	<span class="input-group-addon" id="basic-addon1">From</span>				
+	            <input id="{{ComponentId}}_fromdiv" type="text" class="form-control input-small">
+	            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+        	</div>
+		</div>
+
+		<!-- Graph view dropdown -->
+		<div class="col-md-6">
+			<div style="float:right" class="dropdown">
+				<span class="" id="basic-addon1">View type </span>
+				<select id="{{ComponentId}}_ViewType" class="custom-select" (change)="onViewTypeChange($event.target.value)">
+					<option value="LineGraph" selected>Line graph</option>
+				  	<option value="BarGraph">Bar graph</option>				  	
+				</select>
+			</div>
+		</div>
+	</div>
+	<!-- Third row (end) -->	
+	<br>
+
+	<!-- Four row (start) -->
+	<div class="row">
+		<!-- Time update dropdown -->
+		<div class="col-md-6">
+			<span class="" id="basic-addon1">Time update </span>
+			<select id="{{ComponentId}}_ViewType" class="custom-select" (change)="onTimeUpdateChange($event.target.value)">
+				<option value="5000" selected>5 seconds</option>
+			  	<option value="10000">10 seconds</option>
+			  	<option value="20000">20 seconds</option>
+				<option value="30000">30 seconds</option>
+				<option value="60000">1 minute</option>
+				<option value="120000">2 minutes</option>
+				<option value="300000">5 minutes</option>
+			</select>	
+		</div>
+
+		<!-- Reset and Viewgraph button -->
+		<div class="col-md-6">
+			<div style="float:right" class="btn btn-primary" (click)="ClickViewGraph()">View graph</div>
+			<div style="float:right; margin-right: 20px" class="btn btn-primary" (click)="ClickReset()">Reset</div>
+		</div>
+	</div>
+	<!-- Four row (end) -->
+	<br>
+
+	<!-- Fifth row (start) -->
+	<div class="row">
+		<chart style="display: block;" [options]="chartOptions" (load)="SaveChart($event.context)"></chart>
+	</div>
+	<!-- Fifth row (end) -->
+
+</div>
