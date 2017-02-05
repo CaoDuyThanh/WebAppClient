@@ -1,6 +1,5 @@
-/// <reference path="../../../../../../node_modules/@types/leaflet/index.d.ts"/>
-import { Component, OnInit, AfterViewInit, Injector, ElementRef, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs';
+/// <reference path='../../../../../../node_modules/@types/leaflet/index.d.ts'/>
+import { Component, OnInit, ElementRef } from '@angular/core';
 import { ScriptHelper } from '../../../utils/script.helper';
 import { CSSHelper } from '../../../utils/css.helper';
 import { MinimapConfig } from './minimap.config';
@@ -9,33 +8,36 @@ import { MinimapConfig } from './minimap.config';
 import { CameraService } from '../../../service/camera-service';
 
 // Import models
-import { TrafficPole } from '../../../service/models/CameraModel';
+import { TrafficPole, Camera } from '../../../service/models/CameraModel';
 
 @Component({
     moduleId: module.id,
     selector: 'minimap-cmp',
-    templateUrl: 'minimap.component.html',
-    inputs: [
-        'ComponentId'
-    ]
+    templateUrl: 'minimap.component.html'
 })
 
-export class MinimapComponent implements OnInit, AfterViewInit{
+export class MinimapComponent implements OnInit {
     private isLoadMap: boolean;
     private trafficPoles: TrafficPole[];
     private selectedTrafficPole: TrafficPole;
     private mymap: any;
 
+    // Realtime camera components
+    private componentIds:number[];
+    private cameras: Camera[];
+
     constructor(private cameraService: CameraService,
                 private elementRef: ElementRef,
                 private scriptHelper: ScriptHelper,
-                private cssHelper: CSSHelper){
+                private cssHelper: CSSHelper) {
         this.isLoadMap = false;
         this.trafficPoles = [];
         this.selectedTrafficPole = new TrafficPole();
+        this.componentIds = [];
+        this.cameras = [];
     }
 
-    ngOnInit(){
+    ngOnInit() {
         // Load External CSS
         var leafletCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/leaflet.css');
         this.elementRef.nativeElement.prepend(leafletCss);
@@ -47,26 +49,23 @@ export class MinimapComponent implements OnInit, AfterViewInit{
         this.elementRef.nativeElement.prepend(leafletTag);
         this.elementRef.nativeElement.prepend(leafletAjaxTag);
     }
-    
-    ngAfterViewInit(){
-    }
 
-    loadMap(): void{
+    loadMap(): void {
         this.mymap = L.map('minimap');
         var rasterOption = {
             maxZoom: MinimapConfig.MAX_ZOOM,
             id: MinimapConfig.MAPID
-        }
+        };
         var rasterLayer = L.tileLayer(MinimapConfig.RASTER_URL, rasterOption);
         rasterLayer.addTo(this.mymap);
         var rasterDisplayLayer = {
-            "Raster layer": rasterLayer
+            'Raster layer': rasterLayer
         };
-        var layerControl = L.control.layers(rasterDisplayLayer).addTo(this.mymap);
+        L.control.layers(rasterDisplayLayer).addTo(this.mymap);
         this.mymap.setView(MinimapConfig.DEFAULT_VIEW, MinimapConfig.DEFAULT_ZOOM);
     }
 
-    addTrafficPolesMarker(): void{
+    addTrafficPolesMarker(): void {
         this.trafficPoles.forEach((trafficPole: TrafficPole) => {
             var marker = L.marker([trafficPole.Lat, trafficPole.Lon])
                           .on('click', () => {
@@ -77,11 +76,11 @@ export class MinimapComponent implements OnInit, AfterViewInit{
                           });
 
 
-            marker.addTo(this.mymap)
+            marker.addTo(this.mymap);
         });
     }
 
-    loadCamera(): void{
+    loadCamera(): void {
         (this.cameraService.GetAllTrafficPoles())
             .subscribe(
                 (results: TrafficPole[]) => {
@@ -90,18 +89,36 @@ export class MinimapComponent implements OnInit, AfterViewInit{
                 },
                 (err: any) => {
                     console.log(err);
-                },
-                () => {}
+                }
             );
     }
 
-    SelectTrafficPole(trafficPole: TrafficPole): void{
+    SelectTrafficPole(trafficPole: TrafficPole): void {
         this.mymap.panTo(L.latLng(trafficPole.Lat, trafficPole.Lon));
     }
 
-    ClickLoadMap(): void{
+    ClickLoadMap(): void {
         this.isLoadMap = true;
         this.loadMap();
         this.loadCamera();
+    }
+
+    CreateComponentId(idx: number):string {
+        return 'Component' + idx.toString();
+    }
+
+    AddCamera(camera: Camera): void {
+        if (camera) {
+            var currentTimeStamp = Math.floor(Date.now() / 1000);
+            this.componentIds.push(currentTimeStamp);
+
+            this.cameras.push(camera);
+        }
+    }
+
+    ClickDeleteCamera(componentId:number): void {
+        var idx = this.componentIds.indexOf(componentId);
+        this.componentIds.splice(idx, 1);
+        this.cameras.splice(idx, 1);
     }
 }
