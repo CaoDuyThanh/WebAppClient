@@ -35,7 +35,7 @@ import {SidebarComponent} from '../shared/index';
 
         // Statistic Modules
         RealtimeStatisticModule,
-        
+
      //    ChartModule,
      //    TableModule,
      //    FormModule,
