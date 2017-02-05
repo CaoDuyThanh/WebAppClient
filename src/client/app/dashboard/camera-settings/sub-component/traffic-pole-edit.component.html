@@ -6,7 +6,7 @@
 					<label for="inputEmail3" class="control-label">Pole_Id <br></label>
 				</div>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="inputEmail3" placeholder="pole_id" value="{{ TrafficPole.PoleId }}">
+					<input type="text" class="form-control" id="inputEmail3" placeholder="pole_id" [(ngModel)]="TrafficPole.PoleId" [ngModelOptions]="{standalone: true}" required>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -14,7 +14,7 @@
 					<label for="inputEmail3" class="control-label">Name <br></label>
 				</div>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="inputEmail3" placeholder="name" value="{{ TrafficPole.Name }}">
+					<input type="text" class="form-control" id="inputEmail3" placeholder="name" [(ngModel)]="TrafficPole.Name" [ngModelOptions]="{standalone: true}" required>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -22,7 +22,7 @@
 					<label for="inputEmail3" class="control-label">Lat <br></label>
 				</div>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="inputEmail3" placeholder="lat" value="{{ TrafficPole.Lat }}">
+					<input type="text" class="form-control" id="inputEmail3" placeholder="lat" [(ngModel)]="TrafficPole.Lat" [ngModelOptions]="{standalone: true}" required>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -30,7 +30,7 @@
 					<label for="inputEmail3" class="control-label">Lon <br></label>
 				</div>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="inputEmail3" placeholder="lon" value="{{ TrafficPole.Lon }}">
+					<input type="text" class="form-control" id="inputEmail3" placeholder="lon" [(ngModel)]="TrafficPole.Lon" [ngModelOptions]="{standalone: true}" required>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -38,7 +38,7 @@
 					<label for="inputEmail3" class="control-label">Height <br></label>
 				</div>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="inputEmail3" placeholder="height" value="{{ TrafficPole.Height }}">
+					<input type="text" class="form-control" id="inputEmail3" placeholder="height" [(ngModel)]="TrafficPole.Height" [ngModelOptions]="{standalone: true}" required>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -46,7 +46,7 @@
 					<label for="inputEmail3" class="control-label">Width&nbsp; <br></label>
 				</div>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="inputEmail3" placeholder="width" value="{{ TrafficPole.Width }}">
+					<input type="text" class="form-control" id="inputEmail3" placeholder="width" [(ngModel)]="TrafficPole.Width" [ngModelOptions]="{standalone: true}" required>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -54,7 +54,7 @@
 					<label for="inputEmail3" class="control-label">Type <br></label>
 				</div>
 				<div class="col-sm-10">
-					<input type="checkbox" checked="" data-toggle="toggle">
+					<input type="checkbox" checked="" data-toggle="toggle" [(ngModel)]="TrafficPole.Type" [ngModelOptions]="{standalone: true}">
 				</div>
 			</div>
 			<div class="form-group row">
@@ -62,7 +62,7 @@
 					<label for="inputEmail3" class="control-label">Pole_Angle <br></label>
 				</div>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="inputEmail3" placeholder="pole_angle" value="{{ TrafficPole.PoleAngle }}">
+					<input type="text" class="form-control" id="inputEmail3" placeholder="pole_angle" [(ngModel)]="TrafficPole.PoleAngle" [ngModelOptions]="{standalone: true}" required>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -76,8 +76,15 @@
 							<div class="card">
 							    <div class="card-header" role="tab" id="headingOne">
 							    	<h5 class="mb-0">
-							        	<a data-toggle="collapse" data-parent="#accordion" href="#Camera{{idx+1}}Card" aria-expanded="true" aria-controls="collapseOne" (click)="ClickCamera(idx, Camera)">Camera {{ idx + 1}}</a>
+							        	<a data-toggle="collapse" data-parent="#accordion" href="#Camera{{idx+1}}Card" aria-expanded="true" aria-controls="collapseOne" (click)="ClickCamera(idx, Camera)">Camera {{ idx + 1 }}</a>
+
+							        	<!-- Delete Camera button -->
+							        	<div class="btn btn-danger" style="float: right; 
+							        									   padding-top: 0px; 
+							        									   padding-bottom: 0px" 
+					        									    (click)="ClickDeleteCamera(idx, Camera)"><i class="fa fa-minus"></i></div>
 							    	</h5>
+							    	<div #CameraYesnoContainer></div>
 							    </div>
 
 							    <div id="Camera{{idx+1}}Card" class="collapse" role="tabpanel" aria-labelledby="headingOne">
@@ -89,17 +96,24 @@
 						</div>	
 						<!-- Display TrafficPole.Cameras (end) -->
 
-						<div class="row"><div style="float:right" class="btn btn-primary" (click)="ClickCreate()"><i class="fa fa-plus-circle"></i> &nbsp; Create camera</div></div>
+						<div class="row"><div style="float:right" class="btn btn-primary" (click)="ClickCreateCamera()"><i class="fa fa-plus-circle"></i> &nbsp; Create camera</div></div>
 					</div>
 				</div>
 			</div>
-			<div class="form-group row">
+			<div class="form-group row" [style.display]="isShowYesnoPanel ? 'none' : ''">
 				<div class="col-sm-offset-2 col-sm-5">
-					<div *ngIf="!IsEdit" type="submit" class="btn btn-primary">Create</div>
-					<div *ngIf="IsEdit" type="submit" class="btn btn-primary">Edit</div>
-					<div type="submit" class="btn btn-default">Cancel</div>
+					<div *ngIf="!IsEdit" type="submit" class="btn btn-primary" (click)="ClickCreate()">Create</div>
+					<div *ngIf="IsEdit" type="submit" class="btn btn-primary" (click)="ClickEdit()">Edit</div>
+					<div id="CancelTrafficPoleEditModal" class="btn btn-default" data-dismiss="modal">Cancel</div>
 				</div>
 			</div>
+
+			<!-- Show YesNo panel -->
+			<div class="form-group row">
+				<div class="col-sm-12">
+					<div #YesnoContainer id="YesnoContainer"></div>
+				</div>
+			</div>			
 		</form>
 	</div>
 </div>
