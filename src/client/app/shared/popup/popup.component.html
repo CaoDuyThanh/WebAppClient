@@ -1,0 +1,12 @@
+<!-- Success popup -->
+<div [ngClass]="{'show': isShowSuccessPopup, 'fade': !isShowSuccessPopup}" style="position: fixed; bottom: 0; right: 0;" class="alert alert-success" role="alert">
+    <strong>Success!</strong> {{ Message }}
+</div>
+<!-- Warning popup -->
+<div [ngClass]="{'show': isShowWarningPopup, 'fade': !isShowWarningPopup}" style="position: fixed; bottom: 0; right: 0;" class="alert alert-warning" role="alert">
+    <strong>Warning!</strong> {{ Message }}
+</div>
+<!-- Failure popup -->
+<div [ngClass]="{'show': isShowFailurePopup, 'fade': !isShowFailurePopup}" style="position: fixed; bottom: 0; right: 0;" class="alert alert-danger" role="alert">
+    <strong>Failure!</strong> {{ Message }}
+</div>
