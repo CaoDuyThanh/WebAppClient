@@ -1,7 +1,7 @@
-import { Component, OnInit, Injector} from '@angular/core';
+import { Component, Injector} from '@angular/core';
 
 // Import Models
-import { TrafficPole, Camera, LatLon } from '../../../service/models/CameraModel';
+import { LatLon } from '../../../service/models/CameraModel';
 
 @Component({
     moduleId: module.id,
@@ -13,7 +13,7 @@ export class LatlonEditComponent {
 	public Latlon: LatLon;
 	public IsEdit: boolean;
 
-	constructor(private injector: Injector){
+	constructor(private injector: Injector) {
 		this.Latlon = this.injector.get('Latlon');
 		this.IsEdit = this.injector.get('IsEdit');
 	}
