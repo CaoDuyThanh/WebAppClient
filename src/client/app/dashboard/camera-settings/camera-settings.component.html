@@ -37,14 +37,25 @@
                         </a>
 
                         <div class="dropdown-menu" aria-labelledby="DropdownAction">
-                            <a class="btn btn-danger" style="width: 100%; text-align: left;" (click)="ClickDelete(trafficPole.PoleId)" data-toggle="modal" data-target="#DeleteModal"><i class="fa fa-minus-circle"></i> &nbsp; Delete</a>
-                            <a class="btn btn-success" style="width: 100%; text-align: left;" (click)="ClickDelete(trafficPole.PoleId)" data-toggle="modal" data-target="#DeleteModal"><i class="fa fa-toggle-on"></i> &nbsp; Active</a>
-                            <a class="btn btn-active" style="width: 100%; text-align: left;" (click)="ClickDelete(trafficPole.PoleId)" data-toggle="modal" data-target="#DeleteModal"><i class="fa fa-toggle-off"></i> &nbsp; Deactive</a>
+                            <a class="btn btn-danger" style="width: 100%; text-align: left;" (click)="SelectDelete()" data-toggle="modal" data-target="#YesnoModal"><i class="fa fa-minus-circle"></i> &nbsp; Delete</a>
+                            <a class="btn btn-success" style="width: 100%; text-align: left;" (click)="SelectActive()" data-toggle="modal" data-target="#YesnoModal"><i class="fa fa-toggle-on"></i> &nbsp; Active</a>
+                            <a class="btn btn-active" style="width: 100%; text-align: left;" (click)="SelectDeactive()" data-toggle="modal" data-target="#YesnoModal"><i class="fa fa-toggle-off"></i> &nbsp; Deactive</a>
                         </div>
                     </div>
                 </div>
                 <!-- Action Button (end) -->
 
+                <!-- Select number of items (start) -->
+                <div style="float: right; margin-right: 20px;">
+                    <select class="custom-select" style="font-size: 1rem; border-radius: 0.25rem;" (change)="onNumItemsChange($event.target.value)">
+                        <option value="5" selected>5 items</option>
+                        <option value="10">10 items</option>
+                        <option value="20">20 items</option>
+                        <option value="50">50 items</option>
+                        <option value="100">100 items</option>                        
+                    </select>
+                </div>
+                <!-- Select number of items (end) -->
             </h3>            
         </div>
         <table class="table">
@@ -64,7 +75,7 @@
             <tbody>
                 <tr *ngFor="let trafficPole of TrafficPoles; let idx=index; let even = even; let odd = odd" [ngClass]="{'table-active': odd}">
                     <td>
-                        <input type="checkbox" [attr.checked]="ChoiceTrafficPoles[idx] ? true: null" (click)="ClickCheck($event, idx)">
+                        <input type="checkbox" [(ngModel)]="ChoiceTrafficPoles[idx]" (click)="ClickCheck($event, idx)">
                     </td>                   
                     <td><div data-toggle="modal" data-target="#ShowTrafficPoleInfo" (click)="ShowTrafficPoleInfo(trafficPole)">{{ trafficPole.PoleId }}</div></td>
                     <td><div data-toggle="modal" data-target="#ShowTrafficPoleInfo" (click)="ShowTrafficPoleInfo(trafficPole)">{{ trafficPole.Name }}</div></td>
@@ -99,28 +110,20 @@
         </div>
     </div>
 
-
-    <!-- Success popup -->
-    <div [ngClass]="{'show': isShowSuccessPopup, 'fade': !isShowSuccessPopup}" style="position: fixed; bottom: 0; right: 0;" class="alert alert-success" role="alert">
-        <strong>Success!</strong> {{ Message }}.
-    </div>
-    <!-- Failure popup -->
-    <div [ngClass]="{'show': isShowFailurePopup, 'fade': !isShowFailurePopup}" style="position: fixed; bottom: 0; right: 0;" class="alert alert-danger" role="alert">
-        <strong>Failure!</strong> {{ Message }}.
-    </div>
-
     <!-- Delete Modal (Start) -->
     <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Delete an item</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <h5 class="modal-title">
+                        Delete an item
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </h5>                    
                 </div>
                 <div class="modal-body">
-                    <p>Do you want to delete PoleId = {{ selectedTrafficPole }} ? </p>
+                    <p>{{ deleteMessage }}</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="DeleteTrafficPole()">Delete</button>
@@ -131,16 +134,28 @@
     </div>
     <!-- Delete Modal (End) -->
 
-    
+    <!-- Yesno Modal (start) -->
+    <div class="modal fade" id="YesnoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div #YesnoModalContainer></div>
+                <button id="YesnoModalBtn" type="button" style="display: none;" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+    <!-- Yesno Modal (end) -->
+
     <!-- Show Trafficpole Information Modal (Start) -->
     <div class="modal fade" id="ShowTrafficPoleInfo" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Traffic pole information</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <h5 class="modal-title">
+                        Traffic pole information
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </h5>                    
                 </div>
                 <div class="modal-body">
                     <pre>{{ TrafficPoleInfo | json }}</pre>
@@ -155,16 +170,21 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Create new traffic pole</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <h5 class="modal-title">
+                        Create new traffic pole
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </h5>                    
                 </div>
                 <div class="modal-body">
-                    <div #TrafficPoleModalContainer></div>                    
+                    <div #TrafficPoleModalContainer></div>                  
                 </div>                            
             </div>
         </div>
     </div>                
     <!-- Show create traffic pole Modal (end) -->
+
+    <!-- Show popup -->
+    <popup-cmp [Message]="popupMessage" (PopupListener)="popupType = $event"></popup-cmp>
 </div>
