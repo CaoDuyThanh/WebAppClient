@@ -1,4 +1,4 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, AfterViewInit } from '@angular/core';
 import { ScriptHelper } from '../utils/script.helper';
 import { CSSHelper } from '../utils/css.helper';
 
@@ -12,10 +12,10 @@ import { CSSHelper } from '../utils/css.helper';
 	templateUrl: 'map.component.html'
 })
 
-export class MapComponent {
+export class MapComponent implements AfterViewInit {
 	constructor(private elementRef: ElementRef,
 				private scriptHelper: ScriptHelper,
-				private cssHelper: CSSHelper){
+				private cssHelper: CSSHelper) {
 		// Load External CSS
 		var leafletCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/leaflet.css');
 		var styleCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/style.css');
@@ -51,7 +51,7 @@ export class MapComponent {
 		this.elementRef.nativeElement.appendChild(protobufTag);
 	}
 
-	ngAfterViewInit(){
+	ngAfterViewInit() {
 		var mapSettingsTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/settings.js');
 		var mapTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/map.js');
 
