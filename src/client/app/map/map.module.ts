@@ -9,7 +9,7 @@ import { CSSHelper } from '../utils/css.helper';
     imports: [CommonModule, RouterModule],
     declarations: [MapComponent],
     exports: [MapComponent],
-    providers: [ScriptHelper, 
+    providers: [ScriptHelper,
     			CSSHelper]
 })
 
