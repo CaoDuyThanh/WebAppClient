@@ -422,10 +422,10 @@ export class SeedConfig {
         main: 'index.js',
         defaultExtension: 'js'
       },
-      'ng2-typeahead':       {    // ADD NODE_MODULE HERE
-        main: 'ng2-typeahead.js', 
-        defaultExtension: 'js' 
-      },    
+      'ng2-typeahead': {    // ADD NODE_MODULE HERE
+        main: 'ng2-typeahead.js',
+        defaultExtension: 'js'
+      },
       'rxjs': {
         main: 'Rx.js',
         defaultExtension: 'js'

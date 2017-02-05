@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import { Config } from '../shared/index';
 
 @Injectable()
-export class StreetService{
-	constructor(private http: Http){
+export class StreetService {
+	constructor(private http: Http) {
 	}
 
-	SearchName(name: string, numItems: number): Observable<any>{
+	SearchName(name: string, numItems: number): Observable<any> {
 		let params: string = [
 			`street_name=${name}`,
 			`num_items=${numItems}`
@@ -17,16 +17,16 @@ export class StreetService{
 		return this.http.get(queryUrl)
             .map((res: Response) => {
                 let result = res.json();
-                if (result.status == "success"){
+                if (result.status === 'success') {
                 	return result.data.suggest;
-                }else{
+                } else {
                 	console.log(result.message);
                 	return [];
-                }                
+                }
             });
 	}
 
-	GetNumVehiclesStreet(streetName: string): Observable<any>{
+	GetNumVehiclesStreet(streetName: string): Observable<any> {
 		let params: string = [
 			`street_name=${streetName}`,
 		].join('&');
@@ -34,16 +34,16 @@ export class StreetService{
 		return this.http.get(queryUrl)
             .map((res: Response) => {
                 let result = res.json();
-                if (result.status == "success"){
+                if (result.status === 'success') {
                 	return result.data;
-                }else{
+                } else {
                 	console.log(result.message);
                 	return 0;
-                }                
-            });		
+                }
+            });
 	}
 
-    SearchStreets(streetName: string): Observable<any[]>{
+    SearchStreets(streetName: string): Observable<any[]> {
         let params: string = [
             `street_name=${streetName}`
         ].join('&');
@@ -51,12 +51,12 @@ export class StreetService{
         return this.http.get(queryUrl)
             .map((res: Response) => {
                 let result = res.json();
-                if (result.status == "success"){
+                if (result.status === 'success') {
                     return result.data;
-                }else{
+                } else {
                     console.log(result.message);
                     return [];
-                }                
+                }
             });
     }
 }
