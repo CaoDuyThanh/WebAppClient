@@ -1,9 +1,6 @@
-import { Component, OnInit, Injector, ElementRef, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CSSHelper } from '../../../utils/css.helper';
-
-// Import module
-import { Typeahead } from 'ng2-typeahead';
 
 // Import Service
 import { StreetService } from '../../../service/street-service';
@@ -11,24 +8,21 @@ import { StreetService } from '../../../service/street-service';
 @Component({
     moduleId: module.id,
     selector: 'realtime-street-cmp',
-    templateUrl: 'realtime-street.component.html',
-    inputs: [
-        'ComponentId'
-    ]
+    templateUrl: 'realtime-street.component.html'
 })
 
-export class RealtimeStreetComponent implements OnInit{
+export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy {
     // CONSTANT
-    private NUM_ITEMS: number = 10;
+    static NUM_ITEMS: number = 10;
 
-    public ComponentId: string;
+    @Input() ComponentId: string;
 
     // Search component
     private searchStr: string;
     private suggestSearch: any[];
     private selectedSearch: any;
     private streetSearch: any[];
-    
+
     private chartOptions: any;
     private chart:any;
 
@@ -43,7 +37,7 @@ export class RealtimeStreetComponent implements OnInit{
 
     constructor(private streetService: StreetService,
                 private element: ElementRef,
-                private cssHelper: CSSHelper){
+                private cssHelper: CSSHelper) {
         this.suggestSearch = [];
         this.chart = null;
 
@@ -54,7 +48,7 @@ export class RealtimeStreetComponent implements OnInit{
         this.timeUpdate = 5000;
     }
 
-    ngOnInit(): void{
+    ngOnInit(): void {
         // Add Css
         var bootstrapTimepicker = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/bootstrap-timepicker.css');
         this.element.nativeElement.appendChild(bootstrapTimepicker);
@@ -66,61 +60,57 @@ export class RealtimeStreetComponent implements OnInit{
         this.createChartOptions();
     }
 
-    onViewTypeChange(viewType: string): void{
+    onViewTypeChange(viewType: string): void {
         this.viewType = viewType;
     }
 
-    onTimeUpdateChange(timeUpdate: number): void{
+    onTimeUpdateChange(timeUpdate: number): void {
         this.timeUpdate = timeUpdate;
     }
 
     suggestSearchSelected(suggestSearch: any) {
         this.searchStr = suggestSearch ? suggestSearch.name : 'none';
     }
-    
-    createSearchEvent(): void{
+
+    createSearchEvent(): void {
         Observable.fromEvent(this.element.nativeElement, 'keyup')
             .map((e: any) => e.target.value)
             .filter((text: string) => text.length > 1)
             .debounceTime(200)
-            .map((query: string) => this.streetService.SearchName(query, this.NUM_ITEMS))
+            .map((query: string) => this.streetService.SearchName(query, RealtimeStreetComponent.NUM_ITEMS))
             .switch()
             .subscribe(
                 (results: any) => {
                     this.suggestSearch = results.map((result: any) => {
                         return {
                             name: result,
-                            searchText: result   
-                        }
+                            searchText: result
+                        };
                     });
                 },
                 (err: any) => {
                     console.log(err);
-                },
-                () => {
                 }
             );
     }
 
-    createTimepickerFromDiv(): void{
+    createTimepickerFromDiv(): void {
         var timePickerDiv:any = $('#'+this.ComponentId+'_fromdiv');
-        console.log(timePickerDiv);
         timePickerDiv.timepicker();
     }
 
-    ngAfterViewInit(): void{
+    ngAfterViewInit(): void {
         this.createTimepickerFromDiv();
     }
-    
-    SaveChart(chart:any): void{
+
+    SaveChart(chart:any): void {
         this.chart = chart;
-        console.log(this.chart);
     }
 
-    createChartOptions(): void{
+    createChartOptions(): void {
         this.chartOptions = {
             chart: {
-                type: this.viewType == "LineGraph" ? 'spline' : 'spline'
+                type: this.viewType === 'LineGraph' ? 'spline' : 'spline'
             },
             title: {
                 text: 'Number of vehicles at some streets'
@@ -161,7 +151,7 @@ export class RealtimeStreetComponent implements OnInit{
         };
     }
 
-    ClickSearchRoad(): void{
+    ClickSearchRoad(): void {
         var searchDiv: any = $('#' + this.ComponentId + '_typeahead' + ' .typeahead-input');
         this.searchStr = searchDiv.val();
         (this.streetService.SearchStreets(this.searchStr))
@@ -170,78 +160,66 @@ export class RealtimeStreetComponent implements OnInit{
                 },
                 (err: any) => {
                     console.log(err);
-                },
-                () => {}
-            )
+                }
+            );
     }
 
-    ClickDelete(streetName: string): void{
+    ClickDelete(streetName: string): void {
         this.listRoads.splice(this.listRoads.indexOf(streetName), 1);
     }
 
-    ClickAddRoad(streetName: string): void{
-        if (this.listRoads.indexOf(streetName) < 0){
+    ClickAddRoad(streetName: string): void {
+        if (this.listRoads.indexOf(streetName) < 0) {
             this.listRoads.push(streetName);
         }
     }
 
-    ClickViewGraph(): void{
-        if (this.timer){
+    ClickViewGraph(): void {
+        if (this.timer) {
             this.timer.unsubscribe();
         }
-        
-        for (let idx:number = 0; idx < this.listRoads.length; idx++){
+
+        for (let idx:number = 0; idx < this.listRoads.length; idx++) {
             var roadName = this.listRoads[idx];
             this.chart.addSeries({
                 name: roadName,
                 data: []
-            })
+            });
         }
 
         var observable = Observable.timer(0, this.timeUpdate);
         this.timer = observable.subscribe(() => {
-            for (let idx:number = 0; idx < this.listRoads.length; idx++){
+            for (let idx:number = 0; idx < this.listRoads.length; idx++) {
                 var streetName = this.listRoads[idx];
                 (this.streetService.GetNumVehiclesStreet(streetName))
                     .subscribe(
                         (result: any) => {
-                            console.log(result);
-                            console.log(result.utc_time);
                             var dataLength = this.chart.series[idx].data.length;
-                            if (dataLength == 0){
+                            if (dataLength === 0) {
                                 this.chart.series[idx].addPoint([result.utc_time, result.num_vehicles]);
-                            }else{
-                                var oldUTC = this.chart.series[idx].data[dataLength - 1].x;    
-                                console.log(this.chart.series[idx].data);
-                                console.log(this.chart.series[idx].data[dataLength - 1]);
-
-                                console.log(oldUTC);
-                                if (oldUTC < result.utc_time){
+                            } else {
+                                var oldUTC = this.chart.series[idx].data[dataLength - 1].x;
+                                if (oldUTC < result.utc_time) {
                                     this.chart.series[idx].addPoint([result.utc_time, result.num_vehicles]);
                                 }
                             }
-                            
-                            
                         },
                         (err: any) => {
                             console.log(err);
-                        },
-                        () => {}
+                        }
                     );
             }
-            
         });
     }
 
-    ngOnDestroy(){
-        if (this.timer){
+    ngOnDestroy() {
+        if (this.timer) {
             this.timer.unsubscribe();
         }
     }
 
-    ClickReset(): void{
-        this.chart.series[0].addPoint(
-                    [Date.UTC(1971, 0, 11), 0.79]);
-
+    ClickReset(): void {
+        // TODO
+        console.log('Click Reset');
     }
 }

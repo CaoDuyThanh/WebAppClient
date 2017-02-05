@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { FormsModule }   from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
@@ -10,6 +9,8 @@ import { RealtimeStatisticComponent } from './realtime-statistic.component';
 
 // Import sub Components
 import { RealtimeStreetComponent } from './sub-component/realtime-street.component';
+import { RealtimeCameraComponent } from './sub-component/realtime-camera.component';
+import { TrafficPoleModalComponent } from './sub-component/traffic-pole-modal.component';
 import { MinimapComponent } from './sub-component/minimap.component';
 import { Typeahead } from 'ng2-typeahead';
 
@@ -23,12 +24,14 @@ import { CSSHelper } from '../../utils/css.helper';
         BrowserModule,
     	RouterModule,
     	HttpModule,
-        ChartModule, 
+        ChartModule,
         FormsModule
     ],
     declarations: [
     	RealtimeStatisticComponent,
     	RealtimeStreetComponent,
+        RealtimeCameraComponent,
+        TrafficPoleModalComponent,
         MinimapComponent,
         Typeahead
     ],

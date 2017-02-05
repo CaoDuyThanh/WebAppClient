@@ -47,9 +47,9 @@
                 <div class="col-xl-6" *ngFor="let componentId of componentIds; let idx=index">
                     <div class="jumbotron">
                         <i style="right: 4rem; position: absolute; top: 1rem; cursor: pointer" class="fa fa-times-circle fa-2x" (click)="ClickDeleteStreet(componentId)"></i>
-                        <realtime-street-cmp [ComponentId]="Createsome(componentId)"></realtime-street-cmp>
+                        <realtime-street-cmp [ComponentId]="CreateComponentId(componentId)"></realtime-street-cmp>
                     </div>
-                </div>     
+                </div>
             </div>
             <!-- Third row (end) -->        
             
@@ -61,16 +61,6 @@
             <minimap-cmp></minimap-cmp>
         </div>
         <!-- Camera tab (end) -->
-    </div>
-
-
-
-
-
-
-
-
-
-    
+    </div>    
 
 </div>
