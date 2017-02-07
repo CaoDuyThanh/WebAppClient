@@ -1,0 +1,183 @@
+<div class="container">
+	<!-- First row (start) -->
+	<div class="row ">
+		<!-- Search bar -->
+		<div class="col-md-8">
+			<div class="input-group" #searchdiv>
+				<span class="input-group-addon" id="basic-addon1">Search road</span>
+				<typeahead id="{{ComponentId}}_typeahead" class="form-control" style="margin: 0px; 
+													   padding-top: 0px;
+													   padding-bottom: 0px;"
+					[(ngModel)]="selectedSearch"
+					[list]="suggestSearch"
+					[searchProperty]="'searchText'" [displayProperty]="'name'"
+					[maxSuggestions]="5"
+					(suggestionSelected)="suggestSearchSelected($event)"
+					placeholder="Search road name...">
+				</typeahead>
+			</div>
+		</div>
+		<!-- Add road button -->
+		<div class="col-md-4">
+			<div style="float: right;" data-toggle="modal" [attr.data-target]="'#' + ComponentId + '_ShowSearchStreet'">
+                <div class="btn btn-primary" style="float:right" (click)="ClickSearchRoad()">Search road</div>
+            </div>
+		</div>
+	</div>
+	<!-- First row (start) -->
+	<br>
+
+	<!-- Second row (start) -->
+	<div class="row">
+		<div class="col-xl-12">
+			<div class="alert alert-success" role="alert" style="border-color: #d0e9c6;
+																 background-color: #dff0d8;
+																 color: #55595c;">
+				<h5 class="alert-heading">List roads</h5>
+
+				<div class="row">
+					<!-- Show list Roads -->
+					<div class="col-xl-6 input-group" style="margin-bottom: 10px;" *ngFor="let street of listRoads">
+						<span class="form-control">{{ street }}</span>
+						<span class="input-group-btn">
+							<div class="btn btn-danger" style="float: right" (click)="ClickDelete(street)">Del</div>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<input style="display: none" [(ngModel)]="listRoads.length" [formControl]="listRoadsForm" />
+	</div>
+	<!-- Second row (end) -->
+	<br>
+
+	<!-- Third row (start) -->
+	<div class="row" style="margin-bottom: 10px;">
+		<!-- Datapicker From -->
+		<div class="col-xl-4" style="margin-bottom: 10px;">
+	        <div class="input-group bootstrap-timepicker timepicker">
+	        	<span class="input-group-addon" id="basic-addon1">From</span>				
+	            <input id="{{ComponentId}}_fromdiv" type="text" class="form-control input-small" [(ngModel)]="from"
+	            																				 [formControl]="fromForm">
+        	</div>
+		</div>
+
+		<!-- Datepicker To -->
+		<div class="col-xl-4" style="margin-bottom: 10px;">
+	        <div class="input-group bootstrap-timepicker timepicker">
+	        	<span class="input-group-addon" id="basic-addon1">To</span>
+	            <input id="{{ComponentId}}_todiv" type="text" class="form-control input-small" [(ngModel)]="to"
+	            																			   [formControl]="toForm">
+        	</div>
+		</div>
+
+		<!-- Graph type dropdown -->
+		<div class="col-xl-4" style="margin-bottom: 10px;">
+			<select id="{{ComponentId}}_GraphType" class="custom-select" style="float:right; width: 100%;" 
+																		(change)="onGraphTypeChange($event.target.value)"
+																		[(ngModel)]="graphType"
+																		[formControl]="graphTypeForm">
+				<option value="" disabled selected>Select graph type</option>
+				<option value="LineGraph">Line graph</option>
+			  	<option value="BarGraph">Bar graph</option>				  	
+			</select>
+		</div>
+	</div>
+	<!-- Third row (end) -->
+
+	<!-- Four row (start) -->
+	<div class="row">
+		<!-- Time update dropdown -->
+		<div class="col-xl-4" style="margin-bottom: 10px;">
+			<select id="{{ComponentId}}_ViewType" class="custom-select" style="width: 100%" 
+																		(change)="onViewTypeChange($event.target.value)"
+																		[(ngModel)]="viewType"
+																		[formControl]="viewTypeForm">
+				<option value="" disabled selected>Select view type</option>
+				<option value="Hour">Hour</option>
+			  	<option value="Day">Day</option>
+			  	<option value="Weekend">Weekend</option>
+				<option value="Month">Month</option>
+				<option value="Year">Year</option>
+			</select>
+		</div>
+
+		<!-- Reset and Viewgraph button -->
+		<div class="col-xl-8" style="margin-bottom: 10px;">
+			<div style="float:right" class="btn btn-primary" (click)="ClickViewGraph()"><i class="fa fa-arrow-right"></i> &nbsp; View graph</div>
+			<div style="float:right; margin-right: 20px" class="btn btn-primary" (click)="ClickReset()"><i class="fa fa-refresh"></i> &nbsp; Reset</div>
+		</div>
+	</div>
+	<!-- Four row (end) -->
+	<br>
+
+	<!-- Fifth row (start) -->
+	<!-- Error message -->
+	<div class="row" *ngIf="!group.valid">
+		<div class="col-xl-12">
+			<div class="alert alert-danger" style="border-color: #ebccd1;
+												   background-color: #f2dede;
+												   color: #a94442;">
+			  	<ul>
+			  		<li *ngIf="fromToGroup.hasError('FromLessTo')">'From' must less than 'To' date.</li>
+			  		<li *ngIf="listRoadsForm.hasError('AtLeastOneRoad')">Please add at least one road.</li>
+			  		<li *ngIf="fromForm.hasError('required')">Please select 'From' date.</li>
+			  		<li *ngIf="toForm.hasError('required')">Please select 'To' date.</li>
+			  		<li *ngIf="graphTypeForm.hasError('required')">Please select 'Graph Type'.</li>
+			  		<li *ngIf="viewTypeForm.hasError('required')">Please select 'view Type'.</li>		  		
+			  	</ul>
+			</div>
+		</div>
+	</div>
+	<!-- Fifth row (end) -->
+
+	<!-- Six row (start) -->
+	<div class="row">
+		<chart style="display: block;" [options]="chartOptions" (load)="SaveChart($event.context)"></chart>
+	</div>
+	<!-- Six row (end) -->
+
+
+	<!-- Show search street Modal (start) -->
+    <div class="modal fade" id="{{ComponentId}}_ShowSearchStreet" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                    	Search street results
+                    	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                        <span aria-hidden="true">&times;</span>
+	                    </button>
+                    </h5>                    
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+			            <tbody>
+			                <tr *ngFor="let street of streetSearch; let idx=index; let even = even; let odd = odd" [ngClass]="{'table-active': odd}">
+			                    <td style="width: 80%">
+			                        {{ street.street_name }}
+			                    </td>                   
+			                    <td style="width: 20%">
+			                        <!-- Add Button -->                        
+			                        <div class="btn btn-primary" (click)="ClickAddRoad(street.street_name)">Add</div>
+			                    </td>
+			                </tr>
+			            </tbody>
+			        </table>
+                </div>                            
+            </div>
+        </div>
+    </div>                
+	<!-- Show search street Modal (end) -->
+
+	<!-- Warning popup -->
+    <a id="StreetAnnoucementOpenModalBtn" class="btn btn-danger" style="display: none;" data-toggle="modal" data-target="#StreetAnnoucementModal"></a>
+    <div class="modal fade" id="StreetAnnoucementModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div #AnnoucementModalContainer></div>
+                <button id="StreetAnnoucementCloseModalBtn" type="button" style="display: none;" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
