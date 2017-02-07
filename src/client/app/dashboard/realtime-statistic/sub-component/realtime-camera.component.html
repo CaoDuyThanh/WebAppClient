@@ -32,23 +32,25 @@
 	<!-- Third row (start) -->
 	<div class="row">
 		<!-- Timepicker -->
-		<div class="col-md-6">
+		<div class="col-md-6" style="margin-bottom: 10px;">
 	        <div class="input-group bootstrap-timepicker timepicker">
 	        	<span class="input-group-addon" id="basic-addon1">From</span>				
-	            <input id="{{ComponentId}}_fromdiv" type="text" class="form-control input-small">
+	            <input id="{{ComponentId}}_fromdiv" type="text" class="form-control input-small" [(ngModel)]="from"
+	            																				 [formControl]="fromForm">
 	            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
         	</div>
 		</div>
 
 		<!-- Graph view dropdown -->
-		<div class="col-md-6">
-			<div style="float:right" class="dropdown">
-				<span class="" id="basic-addon1">View type </span>
-				<select id="{{ComponentId}}_ViewType" class="custom-select" (change)="onViewTypeChange($event.target.value)">
-					<option value="LineGraph" selected>Line graph</option>
-				  	<option value="BarGraph">Bar graph</option>				  	
-				</select>
-			</div>
+		<div class="col-md-6" style="margin-bottom: 10px;">
+			<select id="{{ComponentId}}_GraphType" class="custom-select" style="float:right; width: 100%;" 
+																		(change)="onGraphTypeChange($event.target.value)"
+																		[(ngModel)]="graphType"
+																		[formControl]="graphTypeForm">
+				<option value="" disabled selected>Select graph type</option>
+				<option value="LineGraph">Line graph</option>
+			  	<option value="BarGraph">Bar graph</option>				  	
+			</select>
 		</div>
 	</div>
 	<!-- Third row (end) -->	
@@ -57,32 +59,68 @@
 	<!-- Four row (start) -->
 	<div class="row">
 		<!-- Time update dropdown -->
-		<div class="col-md-6">
-			<span class="" id="basic-addon1">Time update </span>
-			<select id="{{ComponentId}}_ViewType" class="custom-select" (change)="onTimeUpdateChange($event.target.value)">
-				<option value="5000" selected>5 seconds</option>
+		<div class="col-xl-4" style="margin-bottom: 10px;">
+			<select id="{{ComponentId}}_ViewType" class="custom-select" style="width: 100%" 
+																		(change)="onTimeUpdateChange($event.target.value)"
+																		[(ngModel)]="timeUpdate"
+																		[formControl]="timeUpdateForm">
+				<option value="" disabled selected>Select time update</option>
+				<option value="5000">5 seconds</option>
 			  	<option value="10000">10 seconds</option>
 			  	<option value="20000">20 seconds</option>
 				<option value="30000">30 seconds</option>
 				<option value="60000">1 minute</option>
 				<option value="120000">2 minutes</option>
 				<option value="300000">5 minutes</option>
-			</select>	
+			</select>
 		</div>
 
 		<!-- Reset and Viewgraph button -->
-		<div class="col-md-6">
-			<div style="float:right" class="btn btn-primary" (click)="ClickViewGraph()">View graph</div>
-			<div style="float:right; margin-right: 20px" class="btn btn-primary" (click)="ClickReset()">Reset</div>
+		<div class="col-xl-8" style="margin-bottom: 10px;">
+			<div style="float:right" class="btn btn-primary" 
+									*ngIf="!isRunning"
+									(click)="ClickStart()"><i class="fa fa-play"></i> &nbsp; Start</div>
+			<div style="float:right" class="btn btn-danger" 
+									*ngIf="isRunning"
+									(click)="ClickStop()"><i class="fa fa-stop"></i> &nbsp; Stop</div>
+			<div style="float:right; margin-right: 20px" class="btn btn-primary" 
+									(click)="ClickReset()"><i class="fa fa-refresh"></i> &nbsp; Reset</div>
 		</div>
 	</div>
 	<!-- Four row (end) -->
 	<br>
 
 	<!-- Fifth row (start) -->
-	<div class="row">
-		<chart style="display: block;" [options]="chartOptions" (load)="SaveChart($event.context)"></chart>
+	<!-- Error message -->
+	<div class="row" *ngIf="!group.valid">
+		<div class="col-xl-12">
+			<div class="alert alert-danger" style="border-color: #ebccd1;
+												   background-color: #f2dede;
+												   color: #a94442;">
+			  	<ul>
+			  		<li *ngIf="fromForm.hasError('required')">Please select 'From' date.</li>
+			  		<li *ngIf="graphTypeForm.hasError('required')">Please select 'Graph Type'.</li>
+			  		<li *ngIf="timeUpdateForm.hasError('required')">Please select 'Time Update'.</li>
+			  	</ul>
+			</div>
+		</div>
 	</div>
 	<!-- Fifth row (end) -->
 
+	<!-- Six row (start) -->
+	<div class="row">
+		<chart style="display: block;" [options]="chartOptions" (load)="SaveChart($event.context)"></chart>
+	</div>
+	<!-- Six row (end) -->
+
+	<!-- Warning popup -->
+    <a id="CameraAnnoucementOpenModalBtn" class="btn btn-danger" style="display: none;" data-toggle="modal" data-target="#CameraAnnoucementModal"></a>
+    <div class="modal fade" id="CameraAnnoucementModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div #AnnoucementModalContainer></div>
+                <button id="CameraAnnoucementCloseModalBtn" type="button" style="display: none;" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>

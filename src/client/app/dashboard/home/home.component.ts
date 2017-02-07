@@ -39,7 +39,8 @@ export class HomeComponent {
 	slides: Array<any> = [];
 	imgUrl: Array<any> = [
 		`assets/img/slider0.png`,
-		`assets/img/slider1.png`
+		`assets/img/slider1.png`,
+		`assets/img/slider2.png`		
 	];
 	/* END */
 	/* Alert component */
@@ -61,7 +62,7 @@ export class HomeComponent {
 	/* END*/
 
 	constructor() {
-		for (let i = 0; i < 2; i++) {
+		for (let i = 0; i < 3; i++) {
 			this.addSlide();
 		}
 	}
@@ -71,7 +72,7 @@ export class HomeComponent {
 		let i = this.slides.length;
 		this.slides.push({
 			image: this.imgUrl[i],
-			text: `${['2D map', '2D density map '][this.slides.length % 2]}
+			text: `${['2D map', '2D density map '][this.slides.length % 3]}
       			${['How we change the world', 'A new way to control the traffic'][this.slides.length % 2]}`
 		});
 	}

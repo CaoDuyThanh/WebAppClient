@@ -1,4 +1,3 @@
-/// <reference path='../../../../../../node_modules/@types/leaflet/index.d.ts'/>
 import { Component, OnInit, ElementRef } from '@angular/core';
 import { ScriptHelper } from '../../../utils/script.helper';
 import { CSSHelper } from '../../../utils/css.helper';
@@ -9,6 +8,8 @@ import { CameraService } from '../../../service/camera-service';
 
 // Import models
 import { TrafficPole, Camera } from '../../../service/models/CameraModel';
+
+declare let L: any;
 
 @Component({
     moduleId: module.id,
@@ -66,8 +67,16 @@ export class MinimapComponent implements OnInit {
     }
 
     addTrafficPolesMarker(): void {
+        var iconOptions = L.icon({
+            iconUrl: '<%= JS_SRC %>/images/camera.svg',
+            iconSize:     [60, 150],
+            iconAnchor:   [30, 150],
+            popupAnchor:  [-3, -76]
+        });
+
         this.trafficPoles.forEach((trafficPole: TrafficPole) => {
-            var marker = L.marker([trafficPole.Lat, trafficPole.Lon])
+
+            var marker = L.marker([trafficPole.Lat, trafficPole.Lon], {icon: iconOptions})
                           .on('click', () => {
                                 this.selectedTrafficPole = trafficPole;
 
@@ -109,7 +118,7 @@ export class MinimapComponent implements OnInit {
 
     AddCamera(camera: Camera): void {
         if (camera) {
-            var currentTimeStamp = Math.floor(Date.now() / 1000);
+            var currentTimeStamp = Math.floor(Date.now());
             this.componentIds.push(currentTimeStamp);
 
             this.cameras.push(camera);

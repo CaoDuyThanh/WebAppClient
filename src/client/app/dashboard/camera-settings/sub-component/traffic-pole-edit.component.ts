@@ -28,16 +28,16 @@ export class TrafficPoleEditComponent {
     public Response: EventEmitter<EventData>;
 
     // Create | Edit Camera Modal - variables
-	@ViewChildren('CameraContainer', { read: ViewContainerRef }) CameraContainer: QueryList<ViewContainerRef>;
+	@ViewChildren('CameraContainer', { read: ViewContainerRef }) private CameraContainer: QueryList<ViewContainerRef>;
 	private listComponents: any[] = [];
 
     // Yesno camera panels for delete camera
-    @ViewChildren('CameraYesnoContainer', { read: ViewContainerRef }) CameraYesnoContainer: QueryList<ViewContainerRef>;
+    @ViewChildren('CameraYesnoContainer', { read: ViewContainerRef }) private CameraYesnoContainer: QueryList<ViewContainerRef>;
     private listYesnoComponents: any[] = [];
 
 
     // Yesno panel for edit function
-    @ViewChild('YesnoContainer', { read: ViewContainerRef }) YesnoContainer: ViewContainerRef;
+    @ViewChild('YesnoContainer', { read: ViewContainerRef }) private YesnoContainer: ViewContainerRef;
     private yesnoComponent: any = null;
     private isShowYesnoPanel: boolean = false;
 

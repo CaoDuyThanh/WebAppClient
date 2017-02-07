@@ -1,4 +1,4 @@
-import { FormsModule }   from '@angular/forms';
+import { FormsModule, ReactiveFormsModule }   from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
 import { NgModule } from '@angular/core';
@@ -7,12 +7,15 @@ import { ChartModule } from 'angular2-highcharts';
 
 import { RealtimeStatisticComponent } from './realtime-statistic.component';
 
+// Import shared modules | components
+import { TypeaheadModule } from '../../shared/shared-module/typeahead.module';
+import { WarningPanelModule } from '../../shared/shared-module/warning-panel/warning-panel.module';
+
 // Import sub Components
 import { RealtimeStreetComponent } from './sub-component/realtime-street.component';
 import { RealtimeCameraComponent } from './sub-component/realtime-camera.component';
 import { TrafficPoleModalComponent } from './sub-component/traffic-pole-modal.component';
 import { MinimapComponent } from './sub-component/minimap.component';
-import { Typeahead } from 'ng2-typeahead';
 
 // Import services
 import { StreetService } from '../../service/street-service';
@@ -25,15 +28,17 @@ import { CSSHelper } from '../../utils/css.helper';
     	RouterModule,
     	HttpModule,
         ChartModule,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule,
+        TypeaheadModule,
+        WarningPanelModule
     ],
     declarations: [
     	RealtimeStatisticComponent,
     	RealtimeStreetComponent,
         RealtimeCameraComponent,
         TrafficPoleModalComponent,
-        MinimapComponent,
-        Typeahead
+        MinimapComponent
     ],
     exports: [RealtimeStatisticComponent],
     providers: [

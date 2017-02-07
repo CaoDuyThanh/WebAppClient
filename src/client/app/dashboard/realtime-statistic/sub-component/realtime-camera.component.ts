@@ -1,6 +1,10 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input,
+         ViewChild, ViewContainerRef, ComponentFactoryResolver, EventEmitter, ReflectiveInjector } from '@angular/core';
+import { AbstractControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { CSSHelper } from '../../../utils/css.helper';
+
+// Import components
+import { WarningPanelComponent } from '../../../shared/shared-module/warning-panel/warning-panel';
 
 // Import Service
 import { CameraService } from '../../../service/camera-service';
@@ -8,46 +12,73 @@ import { CameraService } from '../../../service/camera-service';
 // Import models
 import { Camera } from '../../../service/models/CameraModel';
 
+// Import utils
+import { EventData } from '../../../utils/event.helper';
+
 @Component({
     moduleId: module.id,
     selector: 'realtime-camera-cmp',
-    templateUrl: 'realtime-camera.component.html'
+    templateUrl: 'realtime-camera.component.html',
+    entryComponents: [
+        WarningPanelComponent
+    ]
 })
 
 export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() ComponentId: string;
     @Input() Camera: Camera;
 
+    // Annoucement panel
+    @ViewChild('AnnoucementModalContainer', { read: ViewContainerRef }) AnnoucementModalContainer: ViewContainerRef;
+    private AnnoucementModalComponent: any = null;
+
+    // Input form
+    private group: FormGroup;
+    private fromForm: AbstractControl;
+    private graphTypeForm: AbstractControl;
+    private timeUpdateForm: AbstractControl;
+
     // Chart
     private chartOptions: any;
     private chart:any;
 
     // Parameters
-    private from: number;
-    private viewType: string;
-    private timeUpdate: number;
+    private from: string;
+    private graphType: string;
+    private timeUpdate: string;
 
     // Timer
     private timer: any;
+    private isRunning: boolean;
 
     constructor(private cameraService: CameraService,
-                private element: ElementRef,
-                private cssHelper: CSSHelper) {
+                private fb: FormBuilder,
+                private resolver: ComponentFactoryResolver) {
+        // Input form
+        this.group = fb.group({
+            'fromForm': ['', Validators.required],
+            'graphTypeForm': ['', Validators.required],
+            'timeUpdateForm': ['', Validators.required],
+        });
+        this.fromForm = this.group.controls['fromForm'];
+        this.graphTypeForm = this.group.controls['graphTypeForm'];
+        this.timeUpdateForm = this.group.controls['timeUpdateForm'];
+
+        // Chart
+        this.chartOptions = null;
         this.chart = null;
 
-        var currentTimeStamp = Date.now();
-        this.from = currentTimeStamp;
-        this.viewType = 'LineGraph';
-        this.timeUpdate = 5000;
+        // Parameters
+        this.from = '';
+        this.graphType = '';
+        this.timeUpdate = '';
+
+        // Timer
+        this.timer = null;
+        this.isRunning = false;
     }
 
     ngOnInit(): void {
-        // Add Css
-        var bootstrapTimepicker = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/bootstrap-timepicker.css');
-        this.element.nativeElement.appendChild(bootstrapTimepicker);
-        var customStyle = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/custom-style.css');
-        this.element.nativeElement.appendChild(customStyle);
-
         // Create event for search input
         this.createChartOptions();
     }
@@ -55,7 +86,7 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
     createChartOptions(): void {
         this.chartOptions = {
             chart: {
-                type: this.viewType === 'LineGraph' ? 'spline' : 'spline'
+                type: this.graphType === 'LineGraph' ? 'spline' : 'column'
             },
             title: {
                 text: 'Number of vehicles'
@@ -90,24 +121,39 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
                     marker: {
                         enabled: true
                     }
+                },
+                column: {
+                    pointPadding: 0,
+                    borderWidth: 0,
+                    groupPadding: 0,
+                    shadow: false
                 }
             },
             series: []
         };
     }
 
-    onViewTypeChange(viewType: string): void {
-        this.viewType = viewType;
+    onGraphTypeChange(graphType: string): void {
+        this.graphType = graphType;
+        this.createChartOptions();
     }
 
-    onTimeUpdateChange(timeUpdate: number): void {
+    onTimeUpdateChange(timeUpdate: string): void {
         this.timeUpdate = timeUpdate;
     }
 
+    // Create Timer pick From div (start) ------------------------
+
     createTimepickerFromDiv(): void {
         var timePickerDiv:any = $('#'+this.ComponentId+'_fromdiv');
-        timePickerDiv.timepicker();
+        timePickerDiv.timepicker({
+            defaultTime: ''
+        }).on('changeTime.timepicker', (event: any) => {
+            this.from = timePickerDiv.val();
+        });
     }
+
+    // Create Timer pick From div (end) --------------------------
 
     ngAfterViewInit(): void {
         this.createTimepickerFromDiv();
@@ -117,36 +163,91 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
         this.chart = chart;
     }
 
-    ClickViewGraph(): void {
-        if (this.timer) {
-            this.timer.unsubscribe();
-        }
+    ClickStart(): void {
+        if (this.group.valid) {
+            // Start get data
+            if (this.timer) {
+                this.timer.unsubscribe();
+            }
 
-        this.chart.addSeries({
-            name: 'Camera',
-            data: []
-        });
+            this.chart.addSeries({
+                name: 'Camera',
+                data: []
+            });
 
-        var observable = Observable.timer(0, this.timeUpdate);
-        this.timer = observable.subscribe(() => {
-            (this.cameraService.GetNumVehiclesCamera(this.Camera))
-                .subscribe(
-                    (result: any) => {
-                        var dataLength = this.chart.series[0].data.length;
-                        if (dataLength === 0) {
-                            this.chart.series[0].addPoint([result.utc_time, result.num_vehicles]);
-                        } else {
-                            var oldUTC = this.chart.series[0].data[dataLength - 1].x;
-                            if (oldUTC < result.utc_time) {
+            this.isRunning = true;
+            var observable = Observable.timer(0, +this.timeUpdate);
+            this.timer = observable.subscribe(() => {
+                (this.cameraService.GetNumVehiclesCamera(this.Camera))
+                    .subscribe(
+                        (result: any) => {
+                            var dataLength = this.chart.series[0].data.length;
+                            if (dataLength === 0) {
                                 this.chart.series[0].addPoint([result.utc_time, result.num_vehicles]);
+                            } else {
+                                var oldUTC = this.chart.series[0].data[dataLength - 1].x;
+                                if (oldUTC < result.utc_time) {
+                                    this.chart.series[0].addPoint([result.utc_time, result.num_vehicles]);
+                                }
                             }
+                        },
+                        (err: any) => {
+                            console.log(err);
                         }
-                    },
-                    (err: any) => {
-                        console.log(err);
+                    );
+            });
+        } else {
+            // Open modal
+            var openDiv = $('#CameraAnnoucementOpenModalBtn');
+            openDiv.click();
+
+            // Show warning
+            if (this.AnnoucementModalComponent) {
+                this.AnnoucementModalComponent.destroy();
+            }
+
+            // Create data to pass to modal
+            var response = new EventEmitter<EventData>();
+            let data = [
+                {provide: 'Header', useValue: 'Warning'},
+                {provide: 'Message', useValue:
+                          'Oops! There is something wrong with the inputs. Please correct them before click "Start"'},
+                {provide: 'Response', useValue: response}
+            ];
+            let resolveData = ReflectiveInjector.resolve(data);
+            let injector = ReflectiveInjector.fromResolvedProviders(resolveData, this.AnnoucementModalContainer.parentInjector);
+
+            // Create component
+            let factory = this.resolver.resolveComponentFactory(WarningPanelComponent);
+            let component = factory.create(injector);
+
+            // Add component to modal
+            this.AnnoucementModalContainer.insert(component.hostView);
+            this.AnnoucementModalComponent = component;
+
+            // Handle response
+            response.subscribe(
+                (result: string) => {
+                    switch (result) {
+                        case WarningPanelComponent.CONFIRM:
+                            var closeDiv = $('#CameraAnnoucementCloseModalBtn');
+                            closeDiv.click();
+                            break;
+                        default:
+                            // Do nothing here
+                            break;
                     }
-                );
-        });
+                },
+                (err: any) => {
+                    console.log(err);
+                }
+            );
+        }
+    }
+
+    ClickStop(): void {
+        this.isRunning = false;
+        this.timer.unsubscribe();
     }
 
     ngOnDestroy() {

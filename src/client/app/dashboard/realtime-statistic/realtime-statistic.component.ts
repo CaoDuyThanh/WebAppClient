@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ElementRef } from '@angular/core';
+import { CSSHelper } from '../../utils/css.helper';
 
 @Component({
     moduleId: module.id,
@@ -6,11 +7,20 @@ import { Component } from '@angular/core';
     templateUrl: 'realtime-statistic.component.html'
 })
 
-export class RealtimeStatisticComponent {
+export class RealtimeStatisticComponent implements OnInit {
 	private componentIds:number[];
 
-    constructor() {
+    constructor(private cssHelper: CSSHelper,
+                private element: ElementRef) {
         this.componentIds = [];
+    }
+
+    ngOnInit(): void {
+        var bootstrapTimepicker = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/bootstrap-timepicker.css');
+        this.element.nativeElement.appendChild(bootstrapTimepicker);
+
+        var customStyle = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/custom-style.css');
+        this.element.nativeElement.appendChild(customStyle);
     }
 
     CreateComponentId(idx: number):string {
@@ -22,8 +32,7 @@ export class RealtimeStatisticComponent {
     }
 
     ClickAddViewGraph(): void {
-        var currentTimeStamp = Math.floor(Date.now() / 1000);
+        var currentTimeStamp = Math.floor(Date.now());
         this.componentIds.push(currentTimeStamp);
     }
-
 }

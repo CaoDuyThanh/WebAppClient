@@ -14,7 +14,7 @@ import { TrafficPole } from '../../service/models/CameraModel';
 import { TrafficPoleEditComponent } from './sub-component/traffic-pole-edit.component';
 import { PopupComponent } from '../../shared/popup/index';
 import { YesnoPanelComponent } from '../../shared/yesno-panel/yesno-panel';
-import { WarningPanelComponent } from '../../shared/warning-panel/warning-panel';
+import { WarningPanelComponent } from '../../shared/shared-module/warning-panel/warning-panel';
 
 // Import Utils
 import { EventData } from '../../utils/event.helper';
@@ -41,7 +41,7 @@ export class CameraSettingsComponent implements OnInit {
     public Pages: Pagination;
 
     // Create | Edit TrafficPole Modal - variables
-    @ViewChild('TrafficPoleModalContainer', { read: ViewContainerRef }) TrafficPoleModalContainer: ViewContainerRef;
+    @ViewChild('TrafficPoleModalContainer', { read: ViewContainerRef }) private TrafficPoleModalContainer: ViewContainerRef;
     private TrafficPoleModalComponent: any = null;
 
     // Delete
@@ -49,7 +49,7 @@ export class CameraSettingsComponent implements OnInit {
     private deleteMessage: string;
 
     // Yesno
-    @ViewChild('YesnoModalContainer', { read: ViewContainerRef }) YesnoModalContainer: ViewContainerRef;
+    @ViewChild('YesnoModalContainer', { read: ViewContainerRef }) private YesnoModalContainer: ViewContainerRef;
     private YesnoModalComponent: any = null;
 
     // Popup message

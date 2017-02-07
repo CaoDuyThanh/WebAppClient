@@ -8,13 +8,14 @@ import { CameraSettingsComponent } from './camera-settings.component';
 
 // Import module
 import { PopupModule } from '../../shared/popup/index';
+import { WarningPanelModule } from '../../shared/shared-module/warning-panel/warning-panel.module';
 
 // Import sub Component
 import { TrafficPoleEditComponent } from './sub-component/traffic-pole-edit.component';
 import { CameraEditComponent } from './sub-component/camera-edit.component';
 import { LatlonEditComponent } from './sub-component/latlon-edit.component';
 import { YesnoPanelComponent } from '../../shared/yesno-panel/yesno-panel';
-import { WarningPanelComponent } from '../../shared/warning-panel/warning-panel';
+
 
 @NgModule({
     imports: [
@@ -22,15 +23,15 @@ import { WarningPanelComponent } from '../../shared/warning-panel/warning-panel'
     	RouterModule,
     	HttpModule,
         PopupModule,
-        FormsModule
+        FormsModule,
+        WarningPanelModule
     ],
     declarations: [
     	CameraSettingsComponent,
     	TrafficPoleEditComponent,
     	CameraEditComponent,
     	LatlonEditComponent,
-        YesnoPanelComponent,
-        WarningPanelComponent
+        YesnoPanelComponent
     ],
     exports: [CameraSettingsComponent]
 })

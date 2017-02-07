@@ -1,7 +1,7 @@
 /**
  * INITIALIZE MAP
  */
-var mymap = L.map('mapid');
+var mymap = L.map('main_map');
 var protobuf = dcodeIO.ProtoBuf;
 var bytebuffer = dcodeIO.ByteBuffer;
 

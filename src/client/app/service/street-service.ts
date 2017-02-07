@@ -59,5 +59,22 @@ export class StreetService {
                 }
             });
     }
+
+    GetLocation(streetName: string): Observable<any> {
+        let params: string = [
+            `street_name=${streetName}`
+        ].join('&');
+        let queryUrl = Config.HOST_QUICKSEARCH_API + '/getlocation?' + params;
+        return this.http.get(queryUrl)
+            .map((res: Response) => {
+                let result = res.json();
+                if (result.status === 'success') {
+                    return result.data;
+                } else {
+                    console.log(result.message);
+                    return [];
+                }
+            });
+    }
 }
 

@@ -33,8 +33,8 @@ MAPCONFIG.TRANSIT_STATUS = {
 /**
  * SERVER API CONFIG
  */
-MAPCONFIG.DENSITY_API = "http://192.168.1.107:4000/density/streetspbf/";
-MAPCONFIG.CAMERA_API = "http://192.168.1.107:4000/simulation/alltrafficpoles/";
+MAPCONFIG.DENSITY_API = "http://localhost:4000/density/streetspbf/";
+MAPCONFIG.CAMERA_API = "http://localhost:4000/simulation/alltrafficpoles/";
   MAPCONFIG.CAMERA_MARK_SIZE = {"WIDTH": 50, "HEIGHT": 50};
 
 

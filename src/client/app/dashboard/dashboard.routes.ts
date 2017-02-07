@@ -4,6 +4,7 @@ import { HomeRoutes } from './home/index';
 import { MapSettingsRoutes } from './map-settings/index';
 import { CameraSettingsRoutes } from './camera-settings/index';
 import { RealtimeStatisticRoutes } from './realtime-statistic/index';
+import { DatabaseStatisticRoutes } from './database-statistic/index';
 // import { ChartRoutes } from './charts/index';
 // import { BlankPageRoutes } from './blank-page/index';
 // import { TableRoutes } from './tables/index';
@@ -26,6 +27,7 @@ export const DashboardRoutes: Route[] = [
             ...CameraSettingsRoutes,
 
             // Statistic Component
+            ...DatabaseStatisticRoutes,
             ...RealtimeStatisticRoutes,
 
 	    	// ...ChartRoutes,

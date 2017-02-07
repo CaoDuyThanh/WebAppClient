@@ -25,11 +25,11 @@ export class CameraEditComponent {
 	public IsEdit: boolean;
 
 	// Create | Edit Camera Modal - variables
-	@ViewChildren('LatlonContainer', { read: ViewContainerRef }) LatlonContainer: QueryList<ViewContainerRef>;
+	@ViewChildren('LatlonContainer', { read: ViewContainerRef }) private LatlonContainer: QueryList<ViewContainerRef>;
 	private listComponents: any[] = [];
 
 	// Yesno camera panels for delete camera
-    @ViewChildren('CameraLatlonContainer', { read: ViewContainerRef }) CameraLatlonContainer: QueryList<ViewContainerRef>;
+    @ViewChildren('CameraLatlonContainer', { read: ViewContainerRef }) private CameraLatlonContainer: QueryList<ViewContainerRef>;
     private listLatlonComponents: any[] = [];
 
 	constructor(private injector: Injector,

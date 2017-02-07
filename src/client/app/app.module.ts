@@ -12,6 +12,7 @@ import { SignupModule } from './signup/signup.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SharedModule } from './shared/shared.module';
 
+
 @NgModule({
 	imports: [
 		BrowserModule,
@@ -23,13 +24,14 @@ import { SharedModule } from './shared/shared.module';
 		DashboardModule,
 		SharedModule.forRoot()
 	],
-	declarations: [AppComponent],
+	declarations: [
+		AppComponent,
+	],
 	providers: [{
 		provide: APP_BASE_HREF,
 		useValue: '<%= APP_BASE %>'
 	}],
 	bootstrap: [AppComponent]
-
 })
 
 export class AppModule { }
