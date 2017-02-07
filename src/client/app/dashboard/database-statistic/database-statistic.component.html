@@ -1,0 +1,66 @@
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <!-- First row (start) -->
+    <div class="row">
+        <div class="col-xl-12">
+            <h1 class="page-header">
+                Database statistic
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <i class="fa fa-dashboard"></i>
+                    <a href="Javascript:void(0)" routerLink="/dashboard/home" > Dashboard</a>
+                </li>
+                <li class="active">
+                    <i class="fa fa-area-chart"></i> Database statistic
+                </li>
+            </ol>
+        </div>
+    </div>
+    <!-- First row (end) -->
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#street_tab" role="tab">Street</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#camera_tab" role="tab">Camera</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <!-- Street tab (start) -->
+        <div class="tab-pane active" id="street_tab" role="tabpanel">
+
+            <!-- Second row (start) -->
+            <div class="row">
+                <div class="col-xl-12">
+                    <div style="float:right" class="btn btn-primary" (click)="ClickAddViewGraph()"><i class="fa fa-plus-circle"> &nbsp; Add View Graph</i></div>
+                </div>
+            </div>
+            <!-- Second row (end) -->
+            <br>
+            <!-- Third row (start) -->
+            <div class="row">
+                <div class="col-xl-6" *ngFor="let componentId of componentIds; let idx=index">
+                    <div class="jumbotron">
+                        <i style="right: 4rem; position: absolute; top: 1rem; cursor: pointer" class="fa fa-times-circle fa-2x" (click)="ClickDeleteStreet(componentId)"></i>
+                        <database-street-cmp [ComponentId]="CreateComponentId(componentId)"></database-street-cmp>
+                    </div>
+                </div>
+            </div>
+            <!-- Third row (end) -->        
+            
+        </div>
+        <!-- Street tab (end) -->
+
+        <!-- Camera tab (start) -->
+        <div class="tab-pane" id="camera_tab" role="tabpanel">
+            <minimap-cmp></minimap-cmp>
+        </div>
+        <!-- Camera tab (end) -->
+    </div>    
+
+</div>
