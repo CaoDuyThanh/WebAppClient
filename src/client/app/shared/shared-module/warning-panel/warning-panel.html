@@ -1,0 +1,11 @@
+<div class="card text-center">
+	<h3 class="card-header" *ngIf="Header">{{Header}}</h3>
+	<div class="card-block" style="text-align: center;">
+		<h5 class="card-title">{{ Message }}</h5>
+	</div>
+	<div class="card-footer text-muted">
+		<div style="text-align: right;">
+			<div class="btn btn-warning" (click)="ClickConfirm()">Confirm</div>
+		</div>
+	</div>
+</div>
