@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { ScriptHelper } from '../utils/script.helper';
 import { CSSHelper } from '../utils/css.helper';
 import { Observable } from 'rxjs';
@@ -25,7 +25,7 @@ declare let L: any;
 	templateUrl: 'map.component.html'
 })
 
-export class MapComponent implements AfterViewInit {
+export class MapComponent implements AfterViewInit, OnDestroy {
 	private NUM_ITEMS: number = 5;
 
 	@ViewChild('searchdiv') private searchDiv: ElementRef;
@@ -45,6 +45,8 @@ export class MapComponent implements AfterViewInit {
 	private selectedSearch: any = '';
 	private suggestSearch: any[] = [];
 
+	// Timer
+	private timer: any;
 
 	loadCss(): void {
 		// Load External CSS
@@ -97,6 +99,9 @@ export class MapComponent implements AfterViewInit {
 				private scriptHelper: ScriptHelper) {
 		this.loadCss();
 		this.loadJavascript();
+
+		// Timer
+		this.timer = null;
 	}
 
 	ngAfterViewInit() {
@@ -150,7 +155,6 @@ export class MapComponent implements AfterViewInit {
 	}
 
 	createDensityLayer(): void {
-		console.log('createDensityLayer');
 		this.densityMap = new DensityMapHelper(this.densityService, this.mymap);
 		this.mymap.on('moveend', (event: any) => {
 		   	var bounds = this.mymap.getBounds();
@@ -164,6 +168,23 @@ export class MapComponent implements AfterViewInit {
 		   	};
 		   	this.densityMap.Update(zoom, newBounds, L);
 		});
+
+		if (this.timer) {
+			this.timer.unsubscribe();
+		}
+		var observable = Observable.timer(0, +MapConfig.RELOAD_DENSITY);
+        this.timer = observable.subscribe(() => {
+            var bounds = this.mymap.getBounds();
+		   	var zoom = this.mymap.getZoom();
+
+		   	var newBounds = {
+		   		lat_start: bounds._southWest.lat,
+		   		lon_start: bounds._southWest.lng,
+		   		lat_end: bounds._northEast.lat,
+		   		lon_end: bounds._northEast.lng
+		   	};
+		   	this.densityMap.Update(zoom, newBounds, L);
+        });
 	}
 
 	loadMap(): void {
@@ -260,4 +281,10 @@ export class MapComponent implements AfterViewInit {
 			);
 	}
 	// SEARCH FUNCTION (END) -------------------------
+
+	ngOnDestroy() {
+		if (this.timer) {
+			this.timer.unsubscribe();
+		}
+	}
 }
