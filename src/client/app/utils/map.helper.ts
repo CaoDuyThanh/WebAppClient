@@ -21,13 +21,15 @@ class RegionHelper {
 
 	// Drawing
 	private map: any;
+	private lineOptions: any;
 	private lineGroup: any;
 	private densitySubscription: any;
 
 	constructor(regionId: string,
 				streetType: string,
 				bounds: any,
-				map: any) {
+				map: any,
+				lineOptions: any) {
 		//  Region information
 		this.regionId = regionId;
 		this.streetType = streetType;
@@ -35,6 +37,7 @@ class RegionHelper {
 
 		// Drawing
 		this.map = map;
+		this.lineOptions = lineOptions;
 		this.lineGroup = null;
 		this.densitySubscription = null;
 	}
@@ -65,26 +68,11 @@ class RegionHelper {
 						streets.forEach((street: any) => {
 							var runData: any[] = [];
 							street.points.forEach((point: any) => {
-								var latlng = new L.latLng(point.lat, point.lon, 10);
+								var latlng = new L.latLng(point.lat, point.lon, Math.floor((+point.dens / 100) * 7));
 								runData.push(latlng);
 							});
 							if (runData.length > 0) {
-		                        var lineoptions = {
-		                        	multiOptions: {
-								        optionIdxFn: (latLng: any) => {
-								            return 0;
-								        },
-								        options: [
-								            {color: '#0000FF'}
-								        ],
-									    weight: 6,
-									    lineCap: 'butt',
-									    opacity: 0.3,
-									    smoothFactor: 1
-									}
-								};
-
-		                        var polyLine: any = L.multiOptionsPolyline(runData, lineoptions);
+		                        var polyLine: any = L.multiOptionsPolyline(runData, this.lineOptions);
 		                        polyLine.addTo(this.lineGroup);
 		                    }
 						});
@@ -113,7 +101,6 @@ class RegionHelper {
 	}
 
 	Destroy(): void {
-		console.log('Destroy');
 		if (this.densitySubscription) {
 			this.densitySubscription.unsubscribe();
 		}
@@ -136,6 +123,7 @@ export class DensityMapHelper {
 
 	// Drawing
 	private map: any;
+	private lineOptions: any;
 	private regions: any;
 
 	constructor(densityService: DensityService,
@@ -151,6 +139,33 @@ export class DensityMapHelper {
 		// Drawing
 		this.map = map;
 		this.regions = {};
+
+		// Create line options
+		this.createLineOptions();
+	}
+
+	createLineOptions() {
+		var colorOptions: any[] = [];
+		for (var key in MapConfig.TRANSIT_STATUS) {
+			if (MapConfig.TRANSIT_STATUS.hasOwnProperty(key)) {
+				var transitStatus = MapConfig.TRANSIT_STATUS[key];
+				colorOptions.push({ color: transitStatus.color });
+			}
+		}
+		console.log(colorOptions);
+
+		this.lineOptions = {
+        	multiOptions: {
+		        optionIdxFn: (latLng: any) => {
+		            return latLng.alt;
+		        },
+		        options: colorOptions,
+			    weight: 6,
+			    lineCap: 'butt',
+			    opacity: 0.3,
+			    smoothFactor: 1
+			}
+		};
 	}
 
 	latlonToCellId(lat: number, lon: number): number {
@@ -194,13 +209,10 @@ export class DensityMapHelper {
 		return listRegionIds;
 	}
 
-
 	reloadDensity(L: any): void {
 		// Update list regions
 		var listRegionIds: any = this.getListRegionIds();
 
-		console.log(listRegionIds);
-		console.log(this.regions);
 		// Remove invalid regions
 		for (var key in this.regions) {
 			if (this.regions.hasOwnProperty(key)) {
@@ -215,7 +227,7 @@ export class DensityMapHelper {
 		for (var key in listRegionIds) {
 			if (listRegionIds.hasOwnProperty(key)) {
 				if (!this.regions[key]) {
-					this.regions[key] = new RegionHelper(key, this.streetType, listRegionIds[key], this.map);
+					this.regions[key] = new RegionHelper(key, this.streetType, listRegionIds[key], this.map, this.lineOptions);
 				}
 			}
 		}
