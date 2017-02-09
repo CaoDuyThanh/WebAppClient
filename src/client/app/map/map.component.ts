@@ -1,7 +1,7 @@
-import { Component, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { ScriptHelper } from '../utils/script.helper';
 import { CSSHelper } from '../utils/css.helper';
-import { Observable, Observer } from 'rxjs';
+import { Observable } from 'rxjs';
 
 // Load Map config
 import { MapConfig } from './map.config';
@@ -14,16 +14,8 @@ import { CameraService } from '../service/camera-service';
 import { StreetService } from '../service/street-service';
 import { DensityService } from '../service/density-service';
 
-
-// Import external javascript
-// import '../../assets/js/leaflet-src.js';					// leaflet-src.js
-// import '../../assets/js/leaflet.ajax.min.js';				// leaflet.ajax.min.js
-// import '../../assets/js/leaflet.vectorgrid.bundled.js';		// leaflet.vectorgrid.bundled.js
-// import '../../assets/js/leaflet.markercluster-src.js';	// leaflet.markercluster-src.js
-// import '../../assets/js/leaflet-dvf.js';					// leaflet-dvf.js
-// import '../../assets/js/long.js';						// long.js
-// import '../../assets/js/bytebuffer.js';					// bytebuffer.js
-// import '../../assets/js/protobuf.js';					// protobuf.js
+// Import utils
+import { DensityMapHelper } from '../utils/map.helper';
 
 declare let L: any;
 
@@ -36,6 +28,8 @@ declare let L: any;
 export class MapComponent implements AfterViewInit {
 	private NUM_ITEMS: number = 5;
 
+	@ViewChild('searchdiv') private searchDiv: ElementRef;
+
 	private isLoadMap = false;
 	private trafficPoles: TrafficPole[] = [];
 	private selectedTrafficPole: TrafficPole = new TrafficPole();
@@ -43,13 +37,8 @@ export class MapComponent implements AfterViewInit {
 	// Map Elements
 	private mymap: any;
 	private rasterLayer: any;
-	private vectorLayer: any;
 	private legendLayer: any;
-	private densityLayer: any;
-
-	// Density Handler
-	private densityObservable: Observable<any>;
-	private densityObserver: Observer<any>;
+	private densityMap: DensityMapHelper;
 
 	// Search component
 	private searchStr: string = '';
@@ -82,6 +71,7 @@ export class MapComponent implements AfterViewInit {
 		var leafletVectorgridTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.vectorgrid.bundled.js');
 		var leafletDvfMarkersClusterTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.markercluster-src.js');
 		var leafletDvfTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet-dvf.js');
+		var leafletMultiOptionsPolylineTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.multioptions.polyline.js');
 		var longTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/long.js');
 		var byteBufferTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/bytebuffer.js');
 		var protobufTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/protobuf.js');
@@ -93,6 +83,7 @@ export class MapComponent implements AfterViewInit {
 		this.elementRef.nativeElement.appendChild(leafletVectorgridTag);
 		this.elementRef.nativeElement.appendChild(leafletDvfMarkersClusterTag);
 		this.elementRef.nativeElement.appendChild(leafletDvfTag);
+		this.elementRef.nativeElement.appendChild(leafletMultiOptionsPolylineTag);
 		this.elementRef.nativeElement.appendChild(longTag);
 		this.elementRef.nativeElement.appendChild(byteBufferTag);
 		this.elementRef.nativeElement.appendChild(protobufTag);
@@ -104,9 +95,8 @@ export class MapComponent implements AfterViewInit {
 				private elementRef: ElementRef,
 				private cssHelper: CSSHelper,
 				private scriptHelper: ScriptHelper) {
-				this.loadCss();
-				this.loadJavascript();
-				this.createSearchEvent();
+		this.loadCss();
+		this.loadJavascript();
 	}
 
 	ngAfterViewInit() {
@@ -115,7 +105,7 @@ export class MapComponent implements AfterViewInit {
 
 		// this.elementRef.nativeElement.appendChild(mapSettingsTag);
 		// this.elementRef.nativeElement.appendChild(mapTag);
-
+		this.createSearchEvent();
 		setTimeout(() => {
 			this.isLoadMap = true;
 			console.log(this.isLoadMap);
@@ -129,50 +119,12 @@ export class MapComponent implements AfterViewInit {
 	createRasterLayer(): void {
 		this.mymap = L.map('main_map');
 		var rasterOption = {
+			minZoom: MapConfig.MIN_ZOOM,
 			maxZoom: MapConfig.MAX_ZOOM,
 			id: MapConfig.MAPID
 		};
 		this.rasterLayer = L.tileLayer(MapConfig.RASTER_URL, rasterOption);
 		this.rasterLayer.addTo(this.mymap);
-	}
-
-	createVectorLayer(): void {
-		var vectorOptions: any = {
-			water: [],
-			admin: [],
-			country_label: [],
-			marine_label: [],
-			state_label: [],
-			place_label: [],
-			waterway_label: [],
-			landuse: [],
-			landuse_overlay: [],
-			road: (properties: any, zoom: any) => {
-				if (properties.class === 'main') {
-	                this.densityObserver.next(properties.osm_id);
-	            }
-
-				return {
-					weight: 0,
-					opacity: 0
-				};
-			},
-			poi_label: [],
-			waterway: [],
-			aeroway: [],
-			tunnel: [],
-			bridge: [],
-			barrier_line: [],
-			building: [],
-			road_label: [],
-			housenum_label: [],
-		};
-		var vectorGridOptions: any = {
-			rendererFactory: L.canvas.tile,
-			vectorTileLayerStyles: vectorOptions,
-		};
-		this.vectorLayer = L.vectorGrid.protobuf(MapConfig.VECTOR_URL, vectorGridOptions);
-		this.vectorLayer.addTo(this.mymap);
 	}
 
 	createControlLayer(): void {
@@ -198,65 +150,25 @@ export class MapComponent implements AfterViewInit {
 	}
 
 	createDensityLayer(): void {
-		this.densityLayer = L.layerGroup();
-		this.densityObservable = new Observable<any>((observer: Observer<any>) => { this.densityObserver = observer; });
+		console.log('createDensityLayer');
+		this.densityMap = new DensityMapHelper(this.densityService, this.mymap);
+		this.mymap.on('moveend', (event: any) => {
+		   	var bounds = this.mymap.getBounds();
+		   	var zoom = this.mymap.getZoom();
 
-		this.densityObservable
-			.bufferCount(10)
-			.subscribe(
-				(trafficPoleIds: any) => {
-					if (trafficPoleIds.length > 0) {
-						(this.densityService.GetDensity(trafficPoleIds))
-							.subscribe(
-								(data: any) => {
-									var streets = data.streets;
-									streets.forEach((street: any) => {
-						                var runData: any[] = [];
-					                    var segments = street.segments;
-					                    var lastSegment: any;
-					                    segments.forEach((segment: any) => {
-					                        var latlng = new L.LatLng(segment.node_start.lat, segment.node_start.lon);
-					                        latlng.weight = 10 + segment.density_ste / 100;
-					                        lastSegment = segment;
-					                        runData.push(latlng);
-					                    });
-					                    var latlng = new L.LatLng(lastSegment.node_end.lat, lastSegment.node_end.lon);
-					                    latlng.weight = 10 + lastSegment.density_ste / 100;
-					                    runData.push(latlng);
-
-					                    if (runData.length > 0) {
-					                        var weightedPolyline = new L.WeightedPolyline(runData, {
-					                            fill: true,
-					                            fillColor: '#FF0000',
-					                            fillOpacity: 0.4,
-					                            stroke: false,
-					                            dropShadow: false,
-					                            gradient: true,
-					                            weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
-					                        });
-
-					                        // weightedPolyline.addTo(mymap);
-					                        this.densityLayer.addLayer(weightedPolyline);
-					                    }
-						            });
-								},
-								(err: any) => {
-									console.log(err);
-								}
-							);
-					}
-				},
-				(err: any) => {
-					console.log(err);
-				}
-		);
-
-		this.densityLayer.addTo(this.mymap);
+		   	var newBounds = {
+		   		lat_start: bounds._southWest.lat,
+		   		lon_start: bounds._southWest.lng,
+		   		lat_end: bounds._northEast.lat,
+		   		lon_end: bounds._northEast.lng
+		   	};
+		   	this.densityMap.Update(zoom, newBounds, L);
+		});
 	}
 
 	loadMap(): void {
 		this.createRasterLayer();
-		this.createVectorLayer();
+		// this.createVectorLayer();
 		this.createControlLayer();
 		this.createLegendLayer();
 		this.createDensityLayer();
@@ -327,7 +239,7 @@ export class MapComponent implements AfterViewInit {
 	createSearchEvent(): void {
 		// Create suggest search event
 		// var $searchDiv:any = $('.typeahead .typeahead-input');
-		Observable.fromEvent(this.elementRef.nativeElement, 'keyup')
+		Observable.fromEvent(this.searchDiv.nativeElement, 'keyup')
 			.map((e: any) => e.target.value)
 			.filter((text: string) => text.length > 1)
 			.debounceTime(50)
