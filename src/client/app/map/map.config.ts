@@ -16,6 +16,7 @@ export class MapConfig {
 	static MAPID: string = 'mapbox.streets';
 	static DEFAULT_VIEW: any = [10.7688, 106.6619];
 	static DEFAULT_ZOOM: number = 16;
+	static MIN_ZOOM: number = 13;
 	static MAX_ZOOM: number = 20;
 	static RELOAD_DENSITY = 10000;
 	static TRANSIT_STATUS:any = {
@@ -29,4 +30,26 @@ export class MapConfig {
 	                              	other: { display: '', color: '#a418d5' }
 	                            };
 
+
+	static MAP_LEVEL_DELTA: any = {
+		20: 1,
+		19: 1,
+		18: 1,
+		17: 1,
+		16: 1,
+		15: 1,
+		14: 2,
+		13: 6
+	};
+
+	static MAP_LEVEL_STREET_TYPE: any = {
+		20: 'service',
+		19: 'service',
+		18: 'residential',
+		17: 'secondary',
+		16: 'secondary',
+		15: 'secondary',
+		14: 'trunk',
+		13: 'motorway'
+	};
 }
