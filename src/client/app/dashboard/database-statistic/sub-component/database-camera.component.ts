@@ -1,7 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Input,
          ViewChild, ViewContainerRef, ComponentFactoryResolver, EventEmitter, ReflectiveInjector } from '@angular/core';
 import { AbstractControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
 
 // Import components
 import { WarningPanelComponent } from '../../../shared/shared-module/warning-panel/warning-panel';

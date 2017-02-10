@@ -120,12 +120,12 @@ var sendAjax = function(data){
                     var lastSegment;
                     var count = 0;
                     segments.forEach(function(segment){
-                        weightedPolyline._latlngs[count].weight = 10 + segment.density_ste / 100;
+                        weightedPolyline._latlngs[count].weight = 10 + segment.density / 100;
                         lastSegment = segment;
                         count++;
                     });
                     var latlng = new L.LatLng(lastSegment.node_end.lat, lastSegment.node_end.lon);
-                    latlng.weight = 10 + lastSegment.density_ste / 100;
+                    latlng.weight = 10 + lastSegment.density / 100;
 
                     densityLayer.removeLayer(weightedPolyline);
                     // weightedPolyline.removeFrom(mymap);
@@ -147,13 +147,13 @@ var sendAjax = function(data){
                     var lastSegment;
                     segments.forEach(function(segment){
                         var latlng = new L.LatLng(segment.node_start.lat, segment.node_start.lon);
-                        latlng.weight = 10 + segment.density_ste / 100;
+                        latlng.weight = 10 + segment.density / 100;
                         runData.push(latlng);
                         lastSegment = segment;
                     });
 
                     var latlng = new L.LatLng(lastSegment.node_end.lat, lastSegment.node_end.lon);
-                    latlng.weight = 10 + lastSegment.density_ste / 100;
+                    latlng.weight = 10 + lastSegment.density / 100;
                     runData.push(latlng);
 
                     if (runData.length > 0){                    

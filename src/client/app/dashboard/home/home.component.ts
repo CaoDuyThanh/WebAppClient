@@ -40,7 +40,7 @@ export class HomeComponent {
 	imgUrl: Array<any> = [
 		`assets/img/slider0.png`,
 		`assets/img/slider1.png`,
-		`assets/img/slider2.png`		
+		`assets/img/slider2.png`
 	];
 	/* END */
 	/* Alert component */
