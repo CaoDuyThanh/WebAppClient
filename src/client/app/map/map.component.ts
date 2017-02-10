@@ -113,7 +113,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 		this.createSearchEvent();
 		setTimeout(() => {
 			this.isLoadMap = true;
-			console.log(this.isLoadMap);
 			this.loadMap();
 			this.loadCamera();
 		}, 5000);
