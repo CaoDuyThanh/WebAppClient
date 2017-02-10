@@ -15,6 +15,8 @@ import { Camera } from '../../../service/models/CameraModel';
 // Import utils
 import { EventData } from '../../../utils/event.helper';
 
+declare let jwplayer: any;
+
 @Component({
     moduleId: module.id,
     selector: 'realtime-camera-cmp',
@@ -142,8 +144,7 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
         this.timeUpdate = timeUpdate;
     }
 
-    // Create Timer pick From div (start) ------------------------
-
+    // Create Timerpicker & LiveStreamCamera (start) ------------------------
     createTimepickerFromDiv(): void {
         var timePickerDiv:any = $('#'+this.ComponentId+'_fromdiv');
         timePickerDiv.timepicker({
@@ -153,10 +154,26 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
         });
     }
 
-    // Create Timer pick From div (end) --------------------------
+    createLiveStreamCamera(): void {
+        var lastIdx = this.Camera.StreamId.lastIndexOf('/');
+        var first = this.Camera.StreamId.substring(0, lastIdx);
+        var second = this.Camera.StreamId.substring(lastIdx + 1, this.Camera.StreamId.length);
+        jwplayer(this.ComponentId+'_Camera').setup({
+            'flashplayer': 'assets/js/player.swf',
+            'file': second,
+            'streamer': first,
+            'controlbar': 'bottom',
+            'width': '100%',
+            'height': '450'
+        });
+    }
+    // Create Timerpicker & LiveStreamCamera (end) --------------------------
+
+
 
     ngAfterViewInit(): void {
         this.createTimepickerFromDiv();
+        this.createLiveStreamCamera();
     }
 
     SaveChart(chart:any): void {

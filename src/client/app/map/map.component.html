@@ -59,7 +59,7 @@
                 	</h5>
                 </div>
                 <div class="modal-body">
-                	<traffic-pole-modal-cmp [TrafficPole]="selectedTrafficPole"></traffic-pole-modal-cmp>
+                	<traffic-pole-modal-cmp [TrafficPole]="selectedTrafficPole" (Listener)="selectedTrafficPoleListener = $event"></traffic-pole-modal-cmp>
                 </div>                            
             </div>
         </div>
