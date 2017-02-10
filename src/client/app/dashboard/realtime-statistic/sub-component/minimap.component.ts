@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef } from '@angular/core';
 import { ScriptHelper } from '../../../utils/script.helper';
 import { CSSHelper } from '../../../utils/css.helper';
 import { MinimapConfig } from './minimap.config';
+import { Observer } from 'rxjs';
 
 // Import services
 import { CameraService } from '../../../service/camera-service';
@@ -21,6 +22,7 @@ export class MinimapComponent implements OnInit {
     private isLoadMap: boolean;
     private trafficPoles: TrafficPole[];
     private selectedTrafficPole: TrafficPole;
+    private selectedTrafficPoleListener: Observer<any>;
     private mymap: any;
 
     // Realtime camera components
@@ -79,6 +81,7 @@ export class MinimapComponent implements OnInit {
             var marker = L.marker([trafficPole.Lat, trafficPole.Lon], {icon: iconOptions})
                           .on('click', () => {
                                 this.selectedTrafficPole = trafficPole;
+                                this.selectedTrafficPoleListener.next('change');
 
                                 var trafficPoleModal: any = $('#ShowTrafficPoleBtn');
                                 trafficPoleModal.click();

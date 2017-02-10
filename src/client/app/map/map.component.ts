@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { ScriptHelper } from '../utils/script.helper';
 import { CSSHelper } from '../utils/css.helper';
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 
 // Load Map config
 import { MapConfig } from './map.config';
@@ -33,6 +33,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 	private isLoadMap = false;
 	private trafficPoles: TrafficPole[] = [];
 	private selectedTrafficPole: TrafficPole = new TrafficPole();
+	private selectedTrafficPoleListener: Observer<any>;
 
 	// Map Elements
 	private mymap: any;
@@ -77,7 +78,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 		var longTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/long.js');
 		var byteBufferTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/bytebuffer.js');
 		var protobufTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/protobuf.js');
-
+		var jwplayer = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/jwplayer.js');
 
 		this.elementRef.nativeElement.appendChild(jqueryTag);
 		this.elementRef.nativeElement.appendChild(leafletTag);
@@ -89,6 +90,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 		this.elementRef.nativeElement.appendChild(longTag);
 		this.elementRef.nativeElement.appendChild(byteBufferTag);
 		this.elementRef.nativeElement.appendChild(protobufTag);
+		this.elementRef.nativeElement.appendChild(jwplayer);
 	}
 
 	constructor(private cameraService: CameraService,
@@ -210,6 +212,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 			var marker = L.marker([trafficPole.Lat, trafficPole.Lon], { icon: iconOptions })
 				.on('click', () => {
 					this.selectedTrafficPole = trafficPole;
+					this.selectedTrafficPoleListener.next('change');
 
 					var trafficPoleModal: any = $('#ShowTrafficPoleBtn');
 					trafficPoleModal.click();
