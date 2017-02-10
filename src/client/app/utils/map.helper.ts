@@ -24,6 +24,7 @@ class RegionHelper {
 	private lineOptions: any;
 	private lineGroup: any;
 	private densitySubscription: any;
+	private streetData: any[];
 
 	constructor(regionId: string,
 				streetType: string,
@@ -58,25 +59,47 @@ class RegionHelper {
 	 * @param {any}           		 			[description]
 	 */
 	Update(densityService: DensityService, L: any): void {
-		this.Destroy();
+		if (this.densitySubscription) {
+			this.densitySubscription.unsubscribe();
+		}
 		this.densitySubscription = (densityService.GetDensity(this.bounds, this.streetType))
 			.subscribe(
 				(data: any) => {
 					var streets = data.streets;
-					this.lineGroup = L.layerGroup();
 					if (streets.length > 0) {
-						streets.forEach((street: any) => {
-							var runData: any[] = [];
-							street.points.forEach((point: any) => {
-								var latlng = new L.latLng(point.lat, point.lon, Math.floor((+point.dens / 100) * 7));
-								runData.push(latlng);
+						if (!this.lineGroup) {
+							this.lineGroup = L.layerGroup();
+							this.streetData = [];
+							streets.forEach((street: any) => {
+								var runData: any[] = [];
+								street.points.forEach((point: any) => {
+									var latlng = new L.latLng(point.lat, point.lon, Math.floor((+point.dens / 100) * 7));
+									runData.push(latlng);
+								});
+								if (runData.length > 0) {
+			                        var polyLine: any = L.multiOptionsPolyline(runData, this.lineOptions);
+			                        polyLine.addTo(this.lineGroup);
+			                        this.streetData.push(polyLine);
+			                    }
 							});
-							if (runData.length > 0) {
-		                        var polyLine: any = L.multiOptionsPolyline(runData, this.lineOptions);
-		                        polyLine.addTo(this.lineGroup);
-		                    }
-						});
-						this.lineGroup.addTo(this.map);
+							this.lineGroup.addTo(this.map);
+						} else {
+							var counter = 0;
+							streets.forEach((street: any) => {
+								var runData: any[] = [];
+								street.points.forEach((point: any) => {
+									var latlng = new L.latLng(point.lat, point.lon, Math.floor((+point.dens / 100) * 7));
+									runData.push(latlng);
+								});
+								if (runData.length > 0) {
+			                        var polyLine: any = L.multiOptionsPolyline(runData, this.lineOptions);
+			                        this.streetData[counter].removeFrom(this.lineGroup);			// Remove old street
+			                        this.streetData[counter] = polyLine;
+			                        this.streetData[counter].addTo(this.lineGroup);					// Add new street
+			                    }
+			                    counter++;
+							});
+						}
 					}
 				},
 				(err: any) => {
@@ -108,7 +131,6 @@ class RegionHelper {
 			this.lineGroup.removeFrom(this.map);
 		}
 	}
-
 }
 
 
@@ -152,7 +174,6 @@ export class DensityMapHelper {
 				colorOptions.push({ color: transitStatus.color });
 			}
 		}
-		console.log(colorOptions);
 
 		this.lineOptions = {
         	multiOptions: {
