@@ -1,31 +1,34 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Input, ElementRef,
+import { Component, OnInit, AfterViewInit, OnDestroy, Input,
          ViewChild, ViewContainerRef, ComponentFactoryResolver, EventEmitter, ReflectiveInjector } from '@angular/core';
-import { AbstractControl, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { AbstractControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 // Import components
 import { WarningPanelComponent } from '../../../shared/shared-module/warning-panel/warning-panel';
 
 // Import Service
+// import { CameraService } from '../../../service/camera-service';
 import { StreetService } from '../../../service/street-service';
+
+// Import models
+import { LatLon } from '../../../service/models/CameraModel';
 
 // Import utils
 import { EventData } from '../../../utils/event.helper';
 
 @Component({
     moduleId: module.id,
-    selector: 'realtime-street-cmp',
-    templateUrl: 'realtime-street.component.html',
+    selector: 'realtime-point-cmp',
+    templateUrl: 'realtime-point.component.html',
     entryComponents: [
         WarningPanelComponent
     ]
 })
 
-export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy {
-    // CONSTANT
-    static NUM_ITEMS: number = 10;
-
+export class RealtimePointComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() ComponentId: string;
+    @Input() Point: LatLon;
+    @Input() Index: number;
 
     // Annoucement panel
     @ViewChild('AnnoucementModalContainer', { read: ViewContainerRef }) AnnoucementModalContainer: ViewContainerRef;
@@ -33,23 +36,15 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
 
     // Input form
     private group: FormGroup;
-    private listRoadsForm: AbstractControl;
     private fromForm: AbstractControl;
     private graphTypeForm: AbstractControl;
     private timeUpdateForm: AbstractControl;
 
-    // Search component
-    @ViewChild('searchdiv') private searchDiv: ElementRef;
-    private searchStr: string;
-    private suggestSearch: any[];
-    private selectedSearch: any;
-    private streetSearch: any[];
-
+    // Chart
     private chartOptions: any;
     private chart:any;
 
     // Parameters
-    private listRoads: string[];
     private from: string;
     private graphType: string;
     private timeUpdate: string;
@@ -59,33 +54,23 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
     private isRunning: boolean;
 
     constructor(private streetService: StreetService,
-                private element: ElementRef,
                 private fb: FormBuilder,
                 private resolver: ComponentFactoryResolver) {
         // Input form
         this.group = fb.group({
-            'listRoadsForm': ['', this.listRoadvalidation],
             'fromForm': ['', Validators.required],
             'graphTypeForm': ['', Validators.required],
             'timeUpdateForm': ['', Validators.required],
         });
-        this.listRoadsForm = this.group.controls['listRoadsForm'];
         this.fromForm = this.group.controls['fromForm'];
         this.graphTypeForm = this.group.controls['graphTypeForm'];
         this.timeUpdateForm = this.group.controls['timeUpdateForm'];
-
-        // Search
-        this.searchStr = '';
-        this.suggestSearch = [];
-        this.selectedSearch = null;
-        this.streetSearch = [];
 
         // Chart
         this.chartOptions = null;
         this.chart = null;
 
         // Parameters
-        this.listRoads = [];
         this.from = '';
         this.graphType = '';
         this.timeUpdate = '';
@@ -95,74 +80,9 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
         this.isRunning = false;
     }
 
-    // Validations (start) ---------------------------
-
-    listRoadvalidation(control: FormControl): any {
-        if (control.value === 0) {
-            return {'AtLeastOneRoad': true};
-        }
-    }
-
-    // Validations (end) -----------------------------
-
     ngOnInit(): void {
-        this.createChartOptions();
-    }
-
-    onGraphTypeChange(graphType: string): void {
-        this.graphType = graphType;
-        this.createChartOptions();
-    }
-
-    onTimeUpdateChange(timeUpdate: string): void {
-        this.timeUpdate = timeUpdate;
-    }
-
-    suggestSearchSelected(suggestSearch: any) {
-        this.searchStr = suggestSearch ? suggestSearch.name : 'none';
-    }
-
-    createSearchEvent(): void {
-        Observable.fromEvent(this.searchDiv.nativeElement, 'keyup')
-            .map((e: any) => e.target.value)
-            .filter((text: string) => text.length > 1)
-            .debounceTime(200)
-            .map((query: string) => this.streetService.SearchName(query, RealtimeStreetComponent.NUM_ITEMS))
-            .switch()
-            .subscribe(
-                (results: any) => {
-                    this.suggestSearch = results.map((result: any) => {
-                        return {
-                            name: result,
-                            searchText: result
-                        };
-                    });
-                },
-                (err: any) => {
-                    console.log(err);
-                }
-            );
-    }
-
-    // Create Time picker for From Div (start) ------------------
-    createTimepickerFromDiv(): void {
-        var timePickerDiv:any = $('#'+this.ComponentId+'_fromdiv');
-        timePickerDiv.timepicker({
-            defaultTime: ''
-        }).on('changeTime.timepicker', (event: any) => {
-            this.from = timePickerDiv.val();
-        });
-    }
-    // Create Time picker for From Div (end) --------------------
-
-    ngAfterViewInit(): void {
         // Create event for search input
-        this.createSearchEvent();
-        this.createTimepickerFromDiv();
-    }
-
-    SaveChart(chart:any): void {
-        this.chart = chart;
+        this.createChartOptions();
     }
 
     createChartOptions(): void {
@@ -171,7 +91,7 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
                 type: this.graphType === 'LineGraph' ? 'spline' : 'column'
             },
             title: {
-                text: 'Number of vehicles at some streets'
+                text: 'Number of vehicles'
             },
             subtitle: {
                 text: ''
@@ -215,59 +135,77 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
         };
     }
 
-    ClickSearchRoad(): void {
-        var searchDiv: any = $('#' + this.ComponentId + '_typeahead' + ' .typeahead-input');
-        this.searchStr = searchDiv.val();
-        (this.streetService.SearchStreets(this.searchStr))
-            .subscribe((results: any[]) => {
-                    this.streetSearch = results;
-                },
-                (err: any) => {
-                    console.log(err);
-                }
-            );
+    onGraphTypeChange(graphType: string): void {
+        this.graphType = graphType;
+        this.createChartOptions();
     }
 
-    ClickDelete(streetName: string): void {
-        this.listRoads.splice(this.listRoads.indexOf(streetName), 1);
+    onTimeUpdateChange(timeUpdate: string): void {
+        this.timeUpdate = timeUpdate;
     }
 
-    ClickAddRoad(streetName: string): void {
-        if (this.listRoads.indexOf(streetName) < 0) {
-            this.listRoads.push(streetName);
-        }
+    // Create Timerpicker & LiveStreamCamera (start) ------------------------
+    createTimepickerFromDiv(): void {
+        var timePickerDiv:any = $('#'+this.ComponentId+'_fromdiv');
+        timePickerDiv.timepicker({
+            defaultTime: ''
+        }).on('changeTime.timepicker', (event: any) => {
+            this.from = timePickerDiv.val();
+        });
+    }
+
+    // createLiveStreamCamera(): void {
+    //     var lastIdx = this.Camera.StreamId.lastIndexOf('/');
+    //     var first = this.Camera.StreamId.substring(0, lastIdx);
+    //     var second = this.Camera.StreamId.substring(lastIdx + 1, this.Camera.StreamId.length);
+    //     jwplayer(this.ComponentId+'_Camera').setup({
+    //         'flashplayer': 'assets/js/player.swf',
+    //         'file': second,
+    //         'streamer': first,
+    //         'controlbar': 'bottom',
+    //         'width': '100%',
+    //         'height': '450'
+    //     });
+    // }
+    // Create Timerpicker & LiveStreamCamera (end) --------------------------
+
+
+
+    ngAfterViewInit(): void {
+        this.createTimepickerFromDiv();
+        // this.createLiveStreamCamera();
+    }
+
+    SaveChart(chart:any): void {
+        this.chart = chart;
     }
 
     ClickStart(): void {
         if (this.group.valid) {
+            // Start get data
             if (this.timer) {
                 this.timer.unsubscribe();
             }
 
-            for (let idx:number = 0; idx < this.listRoads.length; idx++) {
-                var roadName = this.listRoads[idx];
-                this.chart.addSeries({
-                    name: roadName,
-                    data: []
-                });
-            }
+            this.chart.addSeries({
+                name: 'Point',
+                data: []
+            });
 
             this.isRunning = true;
             var observable = Observable.timer(0, +this.timeUpdate);
             this.timer = observable.subscribe(() => {
-                for (let idx:number = 0; idx < this.listRoads.length; idx++) {
-                    var streetName = this.listRoads[idx];
-                    console.log(streetName);
+                    var streetName = "Lý Thường Kiệt";
                     (this.streetService.GetNumVehiclesStreet(streetName))
                         .subscribe(
                             (result: any) => {
-                                var dataLength = this.chart.series[idx].data.length;
+                                var dataLength = this.chart.series[0].data.length;
                                 if (dataLength === 0) {
-                                    this.chart.series[idx].addPoint([result.utc_time, result.num_vehicles]);
+                                    this.chart.series[0].addPoint([result.utc_time, result.num_vehicles]);
                                 } else {
-                                    var oldUTC = this.chart.series[idx].data[dataLength - 1].x;
+                                    var oldUTC = this.chart.series[0].data[dataLength - 1].x;
                                     if (oldUTC < result.utc_time) {
-                                        this.chart.series[idx].addPoint([result.utc_time, result.num_vehicles]);
+                                        this.chart.series[0].addPoint([result.utc_time, result.num_vehicles]);
                                     }
                                 }
                             },
@@ -275,11 +213,10 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
                                 console.log(err);
                             }
                         );
-                }
             });
         } else {
             // Open modal
-            var openDiv = $('#StreetAnnoucementOpenModalBtn');
+            var openDiv = $('#PointAnnoucementOpenModalBtn');
             openDiv.click();
 
             // Show warning
@@ -311,7 +248,7 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
                 (result: string) => {
                     switch (result) {
                         case WarningPanelComponent.CONFIRM:
-                            var closeDiv = $('#StreetAnnoucementCloseModalBtn');
+                            var closeDiv = $('#PointAnnoucementCloseModalBtn');
                             closeDiv.click();
                             break;
                         default:
@@ -339,6 +276,6 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
 
     ClickReset(): void {
         // TODO
-        console.log('Click Reset');
+        console.log('Click reset');
     }
 }

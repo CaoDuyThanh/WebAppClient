@@ -1,0 +1,26 @@
+<div>
+	<!-- Load map button -->
+	<div class="row" *ngIf="!isLoadMap">
+		<div class="col-xl-12">
+			<div class="btn btn-primary" style="float: right" (click)="ClickLoadMap()"><i class="fa fa-map"> &nbsp; Load map</i></div>
+		</div>
+	</div>
+
+	<!-- Draw map -->
+	<div class="row">
+		<div class="col-xl-12">
+			<div id="minimap-point" style="width: 100%; height: 400px;"></div>	
+		</div>
+	</div>
+
+	<!-- Realtime point -->
+	<div class="row">
+		<div class="col-xl-6" *ngFor="let componentId of componentIds; let idx=index">
+            <div class="jumbotron">
+                <i style="right: 4rem; position: absolute; top: 1rem; cursor: pointer" class="fa fa-times-circle fa-2x" (click)="ClickDeletePoint(componentId)"></i>
+                <database-point-cmp [ComponentId]="CreateComponentId(componentId)" [Point]="trafficPoints[idx]" [Index]="currentIndex"></database-point-cmp>
+            </div>
+        </div>
+	</div>
+</div>
+

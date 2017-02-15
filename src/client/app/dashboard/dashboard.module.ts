@@ -9,6 +9,7 @@ import { MapSettingsModule } from './map-settings/map-settings.module';
 import { CameraSettingsModule } from './camera-settings/camera-settings.module';
 import { RealtimeStatisticModule } from './realtime-statistic/realtime-statistic.module';
 import { DatabaseStatisticModule } from './database-statistic/database-statistic.module';
+import { CameraVisualizeModule } from './camera-visualize/camera-visualize.module';
 // import { ChartModule } from './charts/chart.module';
 // import { BlankPageModule } from './blank-page/blankPage.module';
 // import { TableModule } from './tables/table.module';
@@ -38,6 +39,9 @@ import {SidebarComponent} from '../shared/index';
         DatabaseStatisticModule,
         RealtimeStatisticModule,
 
+        //Camera  Visualize
+        CameraVisualizeModule,
+        
      //    ChartModule,
      //    TableModule,
      //    FormModule,

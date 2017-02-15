@@ -14,8 +14,10 @@ import { WarningPanelModule } from '../../shared/shared-module/warning-panel/war
 // Import sub Components
 import { RealtimeStreetComponent } from './sub-component/realtime-street.component';
 import { RealtimeCameraComponent } from './sub-component/realtime-camera.component';
+import { RealtimePointComponent } from './sub-component/realtime-point.component';
 import { TrafficPoleModalComponent } from './sub-component/traffic-pole-modal.component';
 import { MinimapComponent } from './sub-component/minimap.component';
+import { MinimapPointComponent } from './sub-component/minimap-point.component';
 
 // Import services
 import { StreetService } from '../../service/street-service';
@@ -37,8 +39,10 @@ import { CSSHelper } from '../../utils/css.helper';
     	RealtimeStatisticComponent,
     	RealtimeStreetComponent,
         RealtimeCameraComponent,
+        RealtimePointComponent,
         TrafficPoleModalComponent,
-        MinimapComponent
+        MinimapComponent,
+        MinimapPointComponent,
     ],
     exports: [RealtimeStatisticComponent],
     providers: [

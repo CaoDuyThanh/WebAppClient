@@ -1,0 +1,17 @@
+#world { 
+	height: 600px; 
+}
+
+/*#gui { 
+	position: absolute; 
+	top: 70px; 
+	right: 2px; 
+	z-index: 1000;
+}*/
+
+#gui {
+	/*transform:translate(-50%, -75px);*/
+	position: absolute; 
+	top: 50px; 
+	right: 2px; 
+}

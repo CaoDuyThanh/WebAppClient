@@ -13,7 +13,9 @@ import { TypeaheadModule } from '../../shared/shared-module/typeahead.module';
 // Import sub-somponents
 import { DatabaseStreetComponent } from './sub-component/database-street.component';
 import { DatabaseCameraComponent } from './sub-component/database-camera.component';
+import { DatabasePointComponent } from './sub-component/database-point.component';
 import { MinimapComponent } from './sub-component/minimap.component';
+import { MinimapPointComponent } from './sub-component/minimap-point.component';
 import { TrafficPoleModalComponent } from './sub-component/traffic-pole-modal.component';
 
 @NgModule({
@@ -29,8 +31,10 @@ import { TrafficPoleModalComponent } from './sub-component/traffic-pole-modal.co
     declarations: [
     	DatabaseStatisticComponent,
         DatabaseStreetComponent,
+        DatabasePointComponent,
         DatabaseCameraComponent,
         MinimapComponent,
+        MinimapPointComponent,
         TrafficPoleModalComponent
     ],
     exports: [DatabaseStatisticComponent],
