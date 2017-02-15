@@ -18,7 +18,7 @@
 		<div class="col-xl-6" *ngFor="let componentId of componentIds; let idx=index">
             <div class="jumbotron">
                 <i style="right: 4rem; position: absolute; top: 1rem; cursor: pointer" class="fa fa-times-circle fa-2x" (click)="ClickDeletePoint(componentId)"></i>
-                <database-point-cmp [ComponentId]="CreateComponentId(componentId)" [Point]="trafficPoints[idx]" [Index]="currentIndex"></database-point-cmp>
+                <database-point-cmp [ComponentId]="CreateComponentId(componentId)" [Point]="trafficPoints[idx]" [Index]="indexs[idx]"></database-point-cmp>
             </div>
         </div>
 	</div>

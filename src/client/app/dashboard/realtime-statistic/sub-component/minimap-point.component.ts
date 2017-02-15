@@ -22,7 +22,7 @@ export class MinimapPointComponent implements OnInit {
     private mymap: any;
     private trafficPoints: LatLon[];
     private selectedTrafficPoint: LatLon;
-    private currentIndex:number;
+    private indexs:number[];
 
     // Realtime camera components
     private componentIds:number[];
@@ -33,7 +33,7 @@ export class MinimapPointComponent implements OnInit {
         this.isLoadMap = false;
         this.componentIds = [];
         this.trafficPoints = [];
-        this.currentIndex = 0;
+        this.indexs = [];
         this.selectedTrafficPoint = new LatLon();
     }
 
@@ -92,12 +92,10 @@ export class MinimapPointComponent implements OnInit {
         });
         var marker = L.marker([trafficPoint.Lat, trafficPoint.Lon], {icon: iconOptions})
                         .on('click', () => {
-                            this.selectedTrafficPoint = trafficPoint;
-                            this.currentIndex = this.trafficPoints.indexOf(trafficPoint) + 1;
-                            //add to view
-                                // if(this.trafficPoints.indexOf(trafficPoint) < 0 ){
-                            this.AddPoint(trafficPoint);
-                                // }
+                                this.selectedTrafficPoint = trafficPoint;
+
+                                //add to view
+                                this.AddPoint(trafficPoint);
                             });
 
         marker.addTo(this.mymap).bindPopup('Point_' + this.trafficPoints.length);
@@ -114,14 +112,17 @@ export class MinimapPointComponent implements OnInit {
 
     AddPoint(point: LatLon): void {
         if (point) {
-            var currentTimeStamp = Math.floor(Date.now());
-            this.componentIds.push(currentTimeStamp);
+            if(this.indexs.indexOf(this.trafficPoints.indexOf(point) + 1) < 0) {
+                var currentTimeStamp = Math.floor(Date.now());
+                this.componentIds.push(currentTimeStamp);
+                this.indexs.push(this.trafficPoints.indexOf(point) + 1);
+            }
         }
     }
 
     ClickDeletePoint(componentId:number): void {
         var idx = this.componentIds.indexOf(componentId);
         this.componentIds.splice(idx, 1);
-        // this.trafficPoints.splice(idx, 1);
+        this.indexs.splice(idx, 1);
     }
 }
