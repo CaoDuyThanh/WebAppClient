@@ -33,17 +33,19 @@ export class TrafficPoleModalComponent implements AfterViewInit {
                 setTimeout(() => {
                     for (var idx = 0; idx < this.TrafficPole.Cameras.length; idx++) {
                         var camera = this.TrafficPole.Cameras[idx];
-                        var lastIdx = camera.StreamId.lastIndexOf('/');
-                        var first = camera.StreamId.substring(0, lastIdx);
-                        var second = camera.StreamId.substring(lastIdx + 1, camera.StreamId.length);
-                        jwplayer(camera.StreamId).setup({
-                            'flashplayer': 'assets/js/player.swf',
-                            'file': second,
-                            'streamer': first,
-                            'controlbar': 'bottom',
-                            'width': '100%',
-                            'height': '450'
-                        });
+                        if(camera.IsActive){
+                            var lastIdx = camera.StreamId.lastIndexOf('/');
+                            var first = camera.StreamId.substring(0, lastIdx);
+                            var second = camera.StreamId.substring(lastIdx + 1, camera.StreamId.length);
+                            jwplayer(camera.StreamId).setup({
+                                'flashplayer': 'assets/js/player.swf',
+                                'file': second,
+                                'streamer': first,
+                                'controlbar': 'bottom',
+                                'width': '100%',
+                                'height': '450'
+                            });
+                        }
                     }
                 }, 1000);
             },

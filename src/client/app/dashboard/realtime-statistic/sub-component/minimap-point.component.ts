@@ -23,6 +23,7 @@ export class MinimapPointComponent implements OnInit {
     private trafficPoints: LatLon[];
     private selectedTrafficPoint: LatLon;
     private indexs:number[];
+    private markers: any[];
 
     // Realtime camera components
     private componentIds:number[];
@@ -34,6 +35,7 @@ export class MinimapPointComponent implements OnInit {
         this.componentIds = [];
         this.trafficPoints = [];
         this.indexs = [];
+        this.markers = [];
         this.selectedTrafficPoint = new LatLon();
     }
 
@@ -96,9 +98,14 @@ export class MinimapPointComponent implements OnInit {
 
                                 //add to view
                                 this.AddPoint(trafficPoint);
+                            }).on('contextmenu', () => {
+                                //remove marker
+                                this.selectedTrafficPoint = trafficPoint;
+                                this.deleteTrafficPoint(trafficPoint);
                             });
 
         marker.addTo(this.mymap).bindPopup('Point_' + this.trafficPoints.length);
+        this.markers.push(marker);
     }
 
     ClickLoadMap(): void {
@@ -108,6 +115,22 @@ export class MinimapPointComponent implements OnInit {
 
     CreateComponentId(idx: number):string {
         return 'Component' + idx.toString();
+    }
+
+    deleteTrafficPoint(point: LatLon){
+        if (point) {
+            //remove marker
+            var idxM = this.trafficPoints.indexOf(point);
+            var marker = this.markers[idxM];
+            marker.remove();
+
+            //remove statistic
+            var idx = this.indexs.indexOf(this.trafficPoints.indexOf(point) + 1);
+            if(idx >= 0){
+                this.componentIds.splice(idx, 1);
+                this.indexs.splice(idx, 1);
+            }
+        }
     }
 
     AddPoint(point: LatLon): void {

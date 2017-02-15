@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, AfterViewInit} from '@angular/core';
+import { Component, EventEmitter, Input, Output, AfterViewInit } from '@angular/core';
 import { Observable, Observer } from 'rxjs';
 
 // Import models
@@ -24,37 +24,42 @@ export class TrafficPoleModalComponent implements AfterViewInit {
         this.Camera = new EventEmitter<Camera>();
     }
 
-    ClickAddCamera(camera: Camera): void {
-        camera.Parent = this.TrafficPole;
-        this.Camera.next(camera);
-    }
-
     ngAfterViewInit() {
         this.observable = new Observable<any>((observer: any) => {
             this.Listener.next(observer);
         });
-        // this.observable.subscribe(
-        //     (result: any) => {
-        //         setTimeout(() => {
-        //             for (var idx = 0; idx < this.TrafficPole.Cameras.length; idx++) {
-        //                 var camera = this.TrafficPole.Cameras[idx];
-        //                 var lastIdx = camera.StreamId.lastIndexOf('/');
-        //                 var first = camera.StreamId.substring(0, lastIdx);
-        //                 var second = camera.StreamId.substring(lastIdx + 1, camera.StreamId.length);
-        //                 jwplayer(camera.StreamId).setup({
-        //                     'flashplayer': 'assets/js/player.swf',
-        //                     'file': second,
-        //                     'streamer': first,
-        //                     'controlbar': 'bottom',
-        //                     'width': '100%',
-        //                     'height': '450'
-        //                 });
-        //             }
-        //         }, 1000);
-        //     },
-        //     (err: any) => {
-        //         console.log(err);
-        //     }
-        // );
+
+        this.observable.subscribe(
+            (result: any) => {
+                setTimeout(() => {
+                    console.log("here");
+                    for (var idx = 0; idx < this.TrafficPole.Cameras.length; idx++) {
+                        var camera = this.TrafficPole.Cameras[idx];
+                        
+                        if(camera.IsActive){
+                            var lastIdx = camera.StreamId.lastIndexOf('/');
+                            var first = camera.StreamId.substring(0, lastIdx);
+                            var second = camera.StreamId.substring(lastIdx + 1, camera.StreamId.length);
+                            jwplayer(camera.StreamId).setup({
+                                'flashplayer': 'assets/js/player.swf',
+                                'file': second,
+                                'streamer': first,
+                                'controlbar': 'bottom',
+                                'width': '100%',
+                                'height': '450'
+                            });
+                        }
+                    }
+                }, 1000);
+            },
+            (err: any) => {
+                console.log(err);
+            }
+        );
+    }
+
+    ClickAddCamera(camera: Camera): void {
+        camera.Parent = this.TrafficPole;
+        this.Camera.next(camera);
     }
 }

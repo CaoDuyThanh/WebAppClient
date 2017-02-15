@@ -572,6 +572,7 @@ var getJSON = function(url) {
 //update pole
 var updatePole = function(url, camera) {
     // camera.name ="test";
+    console.log(camera)
     $.ajax({
         type: "PUT",
         url: url,
