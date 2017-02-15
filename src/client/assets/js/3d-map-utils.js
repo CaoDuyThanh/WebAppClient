@@ -69,9 +69,10 @@ var CameraSettings = function() {
     this.name="New camera";
     this.pole_angle = 0;
     this.width = 0;
+    this.is_active = false;
     
     this.view = false;
-    this.type1 = false;
+    this.two_pole = false;
     this.viewCamera = ['camera 1', 'camera 2', 'camera 3', 'camera 4'];
     this.list = ['camera 1', 'camera 2', 'camera 3', 'camera 4'];
 
@@ -122,6 +123,7 @@ var CameraSettings = function() {
         select_list.value = cameraIndex;
 
         //add camera to server
+        console.log(cameraInformationList[cameraIndex])
         addPole(settings_3d.addPole, cameraInformationList[cameraIndex]);
     };
 
@@ -183,7 +185,8 @@ var CameraToControl = function(camera){
     control.pole_angle = camera.pole_angle;
     control.width = camera.width;
     control.view = false;
-    control.type1 = camera.type;
+    control.two_pole = camera.two_pole;
+    control.active = camera.is_active;
 
     control.cameraWidth1 = camera.cameras[0].width;
     control.cameraAngleX1 = camera.cameras[0].angle_x;
@@ -192,7 +195,7 @@ var CameraToControl = function(camera){
     control.area1 = camera.cameras[0].area;
     control.one_way1 = camera.cameras[0].one_way;
 
-    control.activeCamera2 = camera.cameras[1].active;
+    control.activeCamera2 = camera.cameras[1].is_active;
     control.cameraWidth2 = camera.cameras[1].width;
     control.cameraAngleX2 = camera.cameras[1].angle_x;
     control.cameraAngleZ2 = camera.cameras[1].angle_z;
@@ -200,7 +203,7 @@ var CameraToControl = function(camera){
     control.area2 = camera.cameras[1].area;
     control.one_way2 = camera.cameras[1].one_way;
 
-    control.activeCamera3 = camera.cameras[2].active;
+    control.activeCamera3 = camera.cameras[2].is_active;
     control.cameraWidth3 = camera.cameras[2].width;
     control.cameraAngleX3 = camera.cameras[2].angle_x;
     control.cameraAngleZ3 = camera.cameras[2].angle_z;
@@ -208,7 +211,7 @@ var CameraToControl = function(camera){
     control.area3 = camera.cameras[2].area;
     control.one_way3 = camera.cameras[2].one_way;
 
-    control.activeCamera4 = camera.cameras[3].active;
+    control.activeCamera4 = camera.cameras[3].is_active;
     control.cameraWidth4 = camera.cameras[3].width;
     control.cameraAngleX4 = camera.cameras[3].angle_x;
     control.cameraAngleZ4 = camera.cameras[3].angle_z;
@@ -228,7 +231,8 @@ var ControlToCamera = function(camera, control){
     camera.height = control.height;
     camera.pole_angle = control.pole_angle;
     camera.width = control.width;
-    camera.type = control.type1;
+    camera.two_pole = control.two_pole;
+    camera.is_active = control.active;
 
     camera.cameras[0].width = control.cameraWidth1;
     camera.cameras[0].angle_x = control.cameraAngleX1;
@@ -236,8 +240,9 @@ var ControlToCamera = function(camera, control){
     camera.cameras[0].fov = control.fov1;
     camera.cameras[0].area = control.area1;
     camera.cameras[0].one_way = control.one_way1;
+    camera.cameras[1].is_active = true;
 
-    camera.cameras[1].active = control.activeCamera2;
+    camera.cameras[1].is_active = control.activeCamera2;
     camera.cameras[1].width = control.cameraWidth2;
     camera.cameras[1].angle_x = control.cameraAngleX2;
     camera.cameras[1].angle_z = control.cameraAngleZ2;
@@ -245,7 +250,7 @@ var ControlToCamera = function(camera, control){
     camera.cameras[1].area = control.area2;
     camera.cameras[1].one_way = control.one_way2;
 
-    camera.cameras[2].active = control.activeCamera3;
+    camera.cameras[2].is_active = control.activeCamera3;
     camera.cameras[2].width = control.cameraWidth3;
     camera.cameras[2].angle_x = control.cameraAngleX3;
     camera.cameras[2].angle_z = control.cameraAngleZ3;
@@ -253,7 +258,7 @@ var ControlToCamera = function(camera, control){
     camera.cameras[2].area = control.area3;
     camera.cameras[2].one_way = control.one_way3;
 
-    camera.cameras[3].active = control.activeCamera4;
+    camera.cameras[3].is_active = control.activeCamera4;
     camera.cameras[3].width = control.cameraWidth4;
     camera.cameras[3].angle_x = control.cameraAngleX4;
     camera.cameras[3].angle_z = control.cameraAngleZ4;
@@ -265,12 +270,13 @@ var ControlToCamera = function(camera, control){
 var createGUI = function(controls){
     var gui = new dat.GUI();
     
-    // gui.add(controls, 'type1').onChange(controls.updateDraw);
+    // gui.add(controls, 'two_pole').onChange(controls.updateDraw);
     gui.add(controls, 'newCamera');
     gui.add(controls, 'save');
     gui.add(controls, 'name').onChange(controls.updateName);
 
-    gui.add(controls, 'type1').onChange(controls.updateDraw);
+    gui.add(controls, 'active').onChange(controls.updateName);
+    gui.add(controls, 'two_pole').onChange(controls.updateDraw);
     gui.add(controls, 'lat').min(10.5).max(11.0).step(0.00001).onChange(controls.updateDraw);
     gui.add(controls, 'lon').min(106.3).max(107.1).step(0.00001).onChange(controls.updateDraw);
     gui.add(controls, 'changePosition').onChange(controls.updateDraw);
@@ -334,7 +340,8 @@ var updateGUI = function(camera, control, gui){
     control.name = camera.name;
     control.pole_angle = camera.pole_angle;
     control.width = camera.width;
-    control.type1 = camera.type;
+    control.two_pole = camera.two_pole;
+    control.active = camera.is_active;
 
     control.cameraWidth1 = camera.cameras[0].width;
     control.cameraAngleX1 = camera.cameras[0].angle_x;
@@ -343,7 +350,7 @@ var updateGUI = function(camera, control, gui){
     control.area1 = camera.cameras[0].area;
     control.one_way1 = camera.cameras[0].one_way;
 
-    control.activeCamera2 = camera.cameras[1].active;
+    control.activeCamera2 = camera.cameras[1].is_active;
     control.cameraWidth2 = camera.cameras[1].width;
     control.cameraAngleX2 = camera.cameras[1].angle_x;
     control.cameraAngleZ2 = camera.cameras[1].angle_z;
@@ -351,7 +358,7 @@ var updateGUI = function(camera, control, gui){
     control.area2 = camera.cameras[1].area;
     control.one_way2 = camera.cameras[1].one_way;
 
-    control.activeCamera3 = camera.cameras[2].active;
+    control.activeCamera3 = camera.cameras[2].is_active;
     control.cameraWidth3 = camera.cameras[2].width;
     control.cameraAngleX3 = camera.cameras[2].angle_x;
     control.cameraAngleZ3 = camera.cameras[2].angle_z;
@@ -359,7 +366,7 @@ var updateGUI = function(camera, control, gui){
     control.area3 = camera.cameras[2].area;
     control.one_way3 = camera.cameras[2].one_way;
 
-    control.activeCamera4 = camera.cameras[3].active;
+    control.activeCamera4 = camera.cameras[3].is_active;
     control.cameraWidth4 = camera.cameras[3].width;
     control.cameraAngleX4 = camera.cameras[3].angle_x;
     control.cameraAngleZ4 = camera.cameras[3].angle_z;
@@ -434,7 +441,7 @@ var CreateThreeCamera = function(camera, view){
     var camera_list = new THREE.Object3D();
     for(var ii=0; ii < camera.cameras.length; ii++){
         iicamera = camera.cameras[ii];
-        if(iicamera.active){
+        if(iicamera.is_active){
             //camera
             var icam = createCube(MeterToworld(settings_3d.default), MeterToworld(settings_3d.default*3), MeterToworld(settings_3d.default), 2+ii);
             icam.position.set(pos.x, MeterToworld(camera.height), pos.y);
@@ -472,7 +479,7 @@ var CreateThreeCamera = function(camera, view){
     cameraModel.add(pole);
     cameraModel.add(hand);
     cameraModel.add(maker);
-    if(camera.type){
+    if(camera.two_pole){
         cameraModel.add(otherpole);
     }
     return cameraModel;
@@ -487,13 +494,14 @@ var newCamera = function(id){
     camera.height = 5;
     camera.pole_angle = 0;
     camera.width = 2;
-    camera.type = false;
+    camera.two_pole = false;
+    camera.is_active = true;
     camera.cameras = [];
     camera.pole_id = id + 1;
 
     for(var ii=0;ii<4;ii++){
         camera.cameras[ii] = {};
-        camera.cameras[ii].active = (ii==0);
+        camera.cameras[ii].is_active = (ii==0);
         camera.cameras[ii].width = 1;
         camera.cameras[ii].angle_x = 10;
         camera.cameras[ii].angle_z = 10;
@@ -504,7 +512,6 @@ var newCamera = function(id){
         camera.cameras[ii].stream_id = settings_3d.streamingServer + (id*4 + ii+1);
         camera.cameras[ii].road = [];
     }
-
     return camera;
 }
 
@@ -623,30 +630,13 @@ var addPole = function(url, camera){
 var retColor = {};
 var getDensityById = function(osm_id){
     var url = settings_3d.densityAPI+'streetIds[]='+osm_id;
-    // console.log(url);
-    
     $.getJSON(url, function (data) {
-        // console.log(data);
-        if(Object.keys(data).length > 0 ){
+        if(data.length > 0 ){
             var color = 0;
-            // console.log(data[osm_id]);
-            // console.log(Object.keys(data[osm_id]).length)
-            for(var ii=0;ii<Object.keys(data[osm_id]).length; ii++){
-                // color = 2;
-                color = color + data[osm_id][Object.keys(data[osm_id])[ii]].density;
-                // if(Object.keys(data[osm_id])[ii] == 2135202725908)
-                //     console.log(osm_id)
-
-                // console.log(retColor);
-            }
+            data[0].segments.forEach(function(segment) {
+                color = color + segment.density;
+            });
             retColor[osm_id]  = Math.floor(color / settings_3d.maxDensity * 7);
-
-             // = color;
-            // ret = color;
-            // coloReturn = color;
-            // if(osm_id == 242309084){ //Ly Thai To
-            
-            // retColor[osm_id] = coloReturn = Math.floor(Math.random() * 7);
         } 
     });
 }

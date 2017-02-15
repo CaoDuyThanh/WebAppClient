@@ -42,6 +42,6 @@ settings_3d.streamingServer = "rtmp://192.168.1.107/myapp/camera_";
 settings_3d.density = false;
 settings_3d.densityTimeout = 5000;
 settings_3d.maxDensity = 100;
-settings_3d.densityAPI = 'http://192.168.1.107:4000/density/streets?';
+settings_3d.densityAPI = 'http://192.168.1.72:4000/density/streets?';
 
 

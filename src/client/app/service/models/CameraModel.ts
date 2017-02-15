@@ -32,8 +32,8 @@ export class Camera {
 	constructor(obj?: any) {
 		this.Parent 	= null;
 		this.Area 		= obj && obj.Area || null;
-		this.OneWay 	= obj && obj.OneWay || null;
-		this.IsActive 	= obj && obj.IsActive || null;
+		this.OneWay 	= obj && obj.OneWay || false;
+		this.IsActive 	= obj && obj.IsActive || false;
 		this.Width 		= obj && obj.Width || null;
 		this.AngleX 	= obj && obj.AngleX || null;
 		this.AngleZ 	= obj && obj.AngleZ || null;
@@ -69,6 +69,7 @@ export class TrafficPole {
 	public PoleAngle: number;
 	public Type: boolean;
 	public Cameras: Camera[];
+	public IsActive: boolean;
 
 	constructor(obj?: any) {
 		this.PoleId 	= obj && obj.PoleId || null;
@@ -80,6 +81,7 @@ export class TrafficPole {
 		this.PoleAngle 	= obj && obj.PoleAngle || null;
 		this.Type 		= obj && obj.Type || null;
 		this.Cameras 	= obj && obj.Cameras || [];
+		this.IsActive 	= obj && obj.IsActive || false;
 	}
 
 	ToJSON(): any {
@@ -87,6 +89,7 @@ export class TrafficPole {
 			'pole_id': this.PoleId,
 			'lat': this.Lat,
 			'lon': this.Lon,
+			'is_active': this.IsActive,
 			'width': this.Width,
 			'height': this.Height,
 			'name': this.Name,

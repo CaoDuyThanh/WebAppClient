@@ -37,7 +37,7 @@
                 	</h5>
                 </div>
                 <div class="modal-body">
-                	<traffic-pole-modal-cmp [TrafficPole]="selectedTrafficPole" (Camera)="AddCamera($event)"></traffic-pole-modal-cmp>
+                	<traffic-pole-modal-cmp [TrafficPole]="selectedTrafficPole" (Camera)="AddCamera($event)" (Listener)="selectedTrafficPoleListener = $event"></traffic-pole-modal-cmp>
                 </div>                            
             </div>
         </div>

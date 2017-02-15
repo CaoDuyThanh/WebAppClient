@@ -14,6 +14,8 @@ import { Camera } from '../../../service/models/CameraModel';
 // Import utils
 import { EventData } from '../../../utils/event.helper';
 
+declare let jwplayer: any;
+
 @Component({
     moduleId: module.id,
     selector: 'database-camera-cmp',
@@ -131,11 +133,26 @@ export class DatabaseCameraComponent implements OnInit, AfterViewInit, OnDestroy
             this.to = datePickerDiv.val();
         });
     }
+
+    createLiveStreamCamera(): void {
+        var lastIdx = this.Camera.StreamId.lastIndexOf('/');
+        var first = this.Camera.StreamId.substring(0, lastIdx);
+        var second = this.Camera.StreamId.substring(lastIdx + 1, this.Camera.StreamId.length);
+        jwplayer(this.ComponentId+'_Camera').setup({
+            'flashplayer': 'assets/js/player.swf',
+            'file': second,
+            'streamer': first,
+            'controlbar': 'bottom',
+            'width': '100%',
+            'height': '450'
+        });
+    }
     // Create Date pick for From and To Div (end) --------------------
 
     ngAfterViewInit(): void {
         this.createDatepickerFromDiv();
         this.createDatepickerToDiv();
+        this.createLiveStreamCamera();
     }
 
     SaveChart(chart:any): void {

@@ -45,12 +45,13 @@ export class CameraService {
 							Height: trafficpole.height,
 							Name: trafficpole.name,
 							PoleAngle: trafficpole.pole_angle,
+							IsActive: trafficpole.is_active,
 							Type: trafficpole.type,
 							Cameras: trafficpole.cameras.map((camera: any) => {
 								return new Camera({
 									Area: camera.area,
 									OneWay: camera.one_way,
-									IsActive: camera.active,
+									IsActive: camera.is_active,
 									Width: camera.width,
 									AngleX: camera.angle_x,
 									AngleZ: camera.angle_z,
@@ -82,13 +83,14 @@ export class CameraService {
 							Width: trafficpole.width,
 							Height: trafficpole.height,
 							Name: trafficpole.name,
+							IsActive: trafficpole.is_active,
 							PoleAngle: trafficpole.pole_angle,
 							Type: trafficpole.type,
 							Cameras: trafficpole.cameras.map((camera: any) => {
 								return new Camera({
 									Area: camera.area,
 									OneWay: camera.one_way,
-									IsActive: camera.active,
+									IsActive: camera.is_active,
 									Width: camera.width,
 									AngleX: camera.angle_x,
 									AngleZ: camera.angle_z,
