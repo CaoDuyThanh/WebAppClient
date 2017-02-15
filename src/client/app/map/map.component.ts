@@ -43,7 +43,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
 	// Search component
 	private searchStr: string = '';
-	private selectedSearch: any = '';
+	// private selectedSearch: any = '';
 	private suggestSearch: any[] = [];
 
 	// Timer
@@ -74,7 +74,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 		var leafletVectorgridTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.vectorgrid.bundled.js');
 		var leafletDvfMarkersClusterTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.markercluster-src.js');
 		var leafletDvfTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet-dvf.js');
-		var leafletMultiOptionsPolylineTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.multioptions.polyline.js');
+		var leafletMultiOptionsPolylineTag = this.scriptHelper.CreateScriptTag('text/javascript',
+			'<%= JS_SRC %>/leaflet.multioptions.polyline.js');
 		var longTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/long.js');
 		var byteBufferTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/bytebuffer.js');
 		var protobufTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/protobuf.js');

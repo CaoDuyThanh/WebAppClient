@@ -1,26 +1,6 @@
-import { Component, ElementRef, AfterViewInit, EventEmitter,
-         ViewChild, ViewContainerRef, ReflectiveInjector, ComponentFactoryResolver
-         } from '@angular/core';
+import { Component, ElementRef, AfterViewInit} from '@angular/core';
 import { ScriptHelper } from '../../utils/script.helper';
 import { CSSHelper } from '../../utils/css.helper';
-import { Pagination } from '../../utils/pagination.helper';
-import { Observer } from 'rxjs';
-
-// Import Service
-import { CameraService } from '../../service/camera-service';
-
-
-// Import Models
-import { TrafficPole } from '../../service/models/CameraModel';
-
-// Import Component
-// import { TrafficPoleEditComponent } from './sub-component/traffic-pole-edit.component';
-import { PopupComponent } from '../../shared/popup/index';
-import { YesnoPanelComponent } from '../../shared/yesno-panel/yesno-panel';
-import { WarningPanelComponent } from '../../shared/shared-module/warning-panel/warning-panel';
-
-// Import Utils
-import { EventData } from '../../utils/event.helper';
 
 @Component({
     moduleId: module.id,
@@ -29,7 +9,7 @@ import { EventData } from '../../utils/event.helper';
 })
 
 export class CameraVisualizeComponent implements AfterViewInit {
-    
+
 	loadCss(): void {
 		// Load External CSS
 		var viziCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/vizicities.css');
@@ -38,6 +18,7 @@ export class CameraVisualizeComponent implements AfterViewInit {
 
 		this.elementRef.nativeElement.appendChild(viziCss);
 		this.elementRef.nativeElement.appendChild(styleCss);
+		this.elementRef.nativeElement.appendChild(datGuiCss);
 	}
 
 	loadJavascript(): void {
@@ -54,10 +35,6 @@ export class CameraVisualizeComponent implements AfterViewInit {
   		var dataTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/3d-map-camera-data.js');
   		var utilsTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/3d-map-utils.js');
 		var mainTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/3d-map.js');
-		// <script src="settings.js"></script>
-  //   <script src="camera_data.js"></script>
-  //   <script src="utils.js"></script>
-  		
 
 		this.elementRef.nativeElement.appendChild(jqueryTag);
 		this.elementRef.nativeElement.appendChild(threejsTag);
@@ -75,13 +52,11 @@ export class CameraVisualizeComponent implements AfterViewInit {
     constructor(private elementRef: ElementRef,
 				private cssHelper: CSSHelper,
 				private scriptHelper: ScriptHelper) {
-		
+
 	}
 
     ngAfterViewInit() {
         this.loadCss();
 		this.loadJavascript();
-
-		
     }
 }

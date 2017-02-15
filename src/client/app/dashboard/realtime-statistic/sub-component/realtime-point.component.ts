@@ -195,7 +195,7 @@ export class RealtimePointComponent implements OnInit, AfterViewInit, OnDestroy 
             this.isRunning = true;
             var observable = Observable.timer(0, +this.timeUpdate);
             this.timer = observable.subscribe(() => {
-                    var streetName = "Lý Thường Kiệt";
+                    var streetName = 'Lý Thường Kiệt';
                     (this.streetService.GetNumVehiclesStreet(streetName))
                         .subscribe(
                             (result: any) => {

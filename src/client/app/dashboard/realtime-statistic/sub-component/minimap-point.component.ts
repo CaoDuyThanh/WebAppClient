@@ -72,10 +72,9 @@ export class MinimapPointComponent implements OnInit {
             point.Lon = e.latlng.lng;
 
             this.trafficPoints.push(point);
+
             //add to map
-            
             this.addTrafficPolesMarker(point);
-            
         });
     }
 
@@ -91,9 +90,6 @@ export class MinimapPointComponent implements OnInit {
             shadowAnchor: [35, 20],
             popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
         });
-
-        // this.trafficPoints.forEach((trafficPoint: LatLon) => {
-        
         var marker = L.marker([trafficPoint.Lat, trafficPoint.Lon], {icon: iconOptions})
                         .on('click', () => {
                             this.selectedTrafficPoint = trafficPoint;
@@ -104,7 +100,7 @@ export class MinimapPointComponent implements OnInit {
                                 // }
                             });
 
-        marker.addTo(this.mymap).bindPopup("Point_" + this.trafficPoints.length);
+        marker.addTo(this.mymap).bindPopup('Point_' + this.trafficPoints.length);
     }
 
     ClickLoadMap(): void {

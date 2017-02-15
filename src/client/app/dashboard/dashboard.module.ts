@@ -41,7 +41,6 @@ import {SidebarComponent} from '../shared/index';
 
         //Camera  Visualize
         CameraVisualizeModule,
-        
      //    ChartModule,
      //    TableModule,
      //    FormModule,
