@@ -36,7 +36,6 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
 
     // Input form
     private group: FormGroup;
-    private fromForm: AbstractControl;
     private graphTypeForm: AbstractControl;
     private timeUpdateForm: AbstractControl;
 
@@ -45,7 +44,6 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
     private chart:any;
 
     // Parameters
-    private from: string;
     private graphType: string;
     private timeUpdate: string;
 
@@ -58,11 +56,9 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
                 private resolver: ComponentFactoryResolver) {
         // Input form
         this.group = fb.group({
-            'fromForm': ['', Validators.required],
             'graphTypeForm': ['', Validators.required],
             'timeUpdateForm': ['', Validators.required],
         });
-        this.fromForm = this.group.controls['fromForm'];
         this.graphTypeForm = this.group.controls['graphTypeForm'];
         this.timeUpdateForm = this.group.controls['timeUpdateForm'];
 
@@ -71,7 +67,6 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
         this.chart = null;
 
         // Parameters
-        this.from = '';
         this.graphType = '';
         this.timeUpdate = '';
 
@@ -144,19 +139,6 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
         this.timeUpdate = timeUpdate;
     }
 
-    // Create Timerpicker & LiveStreamCamera (start) ------------------------
-    createTimepickerFromDiv(): void {
-        var datePickerDiv:any = $('#'+this.ComponentId+'_fromdiv');
-        datePickerDiv.datetimepicker({
-            format: 'yyyy-mm-dd hh:ii:ss',
-            autoclose: true,
-            todayBtn: true,
-            pickerPosition: 'bottom-left'
-        }).on('changeDate', (event: any) => {
-            this.from = datePickerDiv.val();
-        });
-    }
-
     createLiveStreamCamera(): void {
         var lastIdx = this.Camera.StreamId.lastIndexOf('/');
         var first = this.Camera.StreamId.substring(0, lastIdx);
@@ -170,12 +152,8 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
             'height': '450'
         });
     }
-    // Create Timerpicker & LiveStreamCamera (end) --------------------------
-
-
 
     ngAfterViewInit(): void {
-        this.createTimepickerFromDiv();
         this.createLiveStreamCamera();
     }
 

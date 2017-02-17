@@ -29,16 +29,6 @@
 
 	<!-- Third row (start) -->
 	<div class="row">
-		<!-- Timepicker -->
-		<div class="col-md-6" style="margin-bottom: 10px;">
-	        <div class="input-group bootstrap-timepicker timepicker">
-	        	<span class="input-group-addon" id="basic-addon1">From</span>				
-	            <input id="{{ComponentId}}_fromdiv" type="text" class="form-control input-small" [(ngModel)]="from"
-	            																				 [formControl]="fromForm">
-	            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
-        	</div>
-		</div>
-
 		<!-- Graph view dropdown -->
 		<div class="col-md-6" style="margin-bottom: 10px;">
 			<select id="{{ComponentId}}_GraphType" class="custom-select" style="float:right; width: 100%;" 
@@ -96,7 +86,6 @@
 												   background-color: #f2dede;
 												   color: #a94442;">
 			  	<ul>
-			  		<li *ngIf="fromForm.hasError('required')">Please select 'From' date.</li>
 			  		<li *ngIf="graphTypeForm.hasError('required')">Please select 'Graph Type'.</li>
 			  		<li *ngIf="timeUpdateForm.hasError('required')">Please select 'Time Update'.</li>
 			  	</ul>

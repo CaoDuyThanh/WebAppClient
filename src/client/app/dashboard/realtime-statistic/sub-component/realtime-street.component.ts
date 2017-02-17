@@ -34,7 +34,6 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
     // Input form
     private group: FormGroup;
     private listRoadsForm: AbstractControl;
-    private fromForm: AbstractControl;
     private graphTypeForm: AbstractControl;
     private timeUpdateForm: AbstractControl;
 
@@ -50,7 +49,6 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
 
     // Parameters
     private listRoads: string[];
-    private from: string;
     private graphType: string;
     private timeUpdate: string;
 
@@ -65,12 +63,10 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
         // Input form
         this.group = fb.group({
             'listRoadsForm': ['', this.listRoadvalidation],
-            'fromForm': ['', Validators.required],
             'graphTypeForm': ['', Validators.required],
             'timeUpdateForm': ['', Validators.required],
         });
         this.listRoadsForm = this.group.controls['listRoadsForm'];
-        this.fromForm = this.group.controls['fromForm'];
         this.graphTypeForm = this.group.controls['graphTypeForm'];
         this.timeUpdateForm = this.group.controls['timeUpdateForm'];
 
@@ -86,7 +82,6 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
 
         // Parameters
         this.listRoads = [];
-        this.from = '';
         this.graphType = '';
         this.timeUpdate = '';
 
@@ -144,24 +139,9 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
             );
     }
 
-    // Create Time picker for From Div (start) ------------------
-    createTimepickerFromDiv(): void {
-        var datePickerDiv:any = $('#'+this.ComponentId+'_fromdiv');
-        datePickerDiv.datetimepicker({
-            format: 'yyyy-mm-dd hh:ii:ss',
-            autoclose: true,
-            todayBtn: true,
-            pickerPosition: 'bottom-left'
-        }).on('changeDate', (event: any) => {
-            this.from = datePickerDiv.val();
-        });
-    }
-    // Create Time picker for From Div (end) --------------------
-
     ngAfterViewInit(): void {
         // Create event for search input
         this.createSearchEvent();
-        this.createTimepickerFromDiv();
     }
 
     SaveChart(chart:any): void {
