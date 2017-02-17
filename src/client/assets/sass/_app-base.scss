@@ -19,6 +19,10 @@ $topnav-background-color: #222;
 .btn:focus{
     outline: 3px auto #FFF;
 }
+
+.input-group{
+    z-index:1;
+}
 .topnav{
   border-radius: 0;
   background-color: $topnav-background-color;
