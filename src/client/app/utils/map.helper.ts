@@ -12,7 +12,6 @@ class BoxHelper {
 	}
 }
 
-
 class RegionHelper {
 	// Region information
 	private regionId: string;
@@ -51,7 +50,6 @@ class RegionHelper {
 		return this.streetType;
 	}
 	// SET | GET (END) ---------------------------------------------
-
 
 	/**
 	 * Redraw density map
@@ -123,6 +121,9 @@ class RegionHelper {
 		return false;
 	}
 
+	/**
+	 * [Unsubscribe all observable to get density and remove all line from map]
+	 */
 	Destroy(): void {
 		if (this.densitySubscription) {
 			this.densitySubscription.unsubscribe();
@@ -132,7 +133,6 @@ class RegionHelper {
 		}
 	}
 }
-
 
 export class DensityMapHelper {
 	// Map information
