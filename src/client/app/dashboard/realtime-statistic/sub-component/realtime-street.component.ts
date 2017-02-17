@@ -260,7 +260,6 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
             this.timer = observable.subscribe(() => {
                 for (let idx:number = 0; idx < this.listRoads.length; idx++) {
                     var streetName = this.listRoads[idx];
-                    console.log(streetName);
                     (this.streetService.GetNumVehiclesStreet(streetName))
                         .subscribe(
                             (result: any) => {
