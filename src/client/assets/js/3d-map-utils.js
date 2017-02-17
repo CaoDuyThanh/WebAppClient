@@ -275,7 +275,7 @@ var createGUI = function(controls){
     gui.add(controls, 'save');
     gui.add(controls, 'name').onChange(controls.updateName);
 
-    gui.add(controls, 'active').onChange(controls.updateName);
+    // gui.add(controls, 'active').onChange(controls.updateName);
     gui.add(controls, 'two_pole').onChange(controls.updateDraw);
     gui.add(controls, 'lat').min(10.5).max(11.0).step(0.00001).onChange(controls.updateDraw);
     gui.add(controls, 'lon').min(106.3).max(107.1).step(0.00001).onChange(controls.updateDraw);
@@ -426,7 +426,6 @@ var CreateThreeCamera = function(camera, view){
     otherpole.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
     otherpole.translateX(MeterToworld(camera.width));
     
-
     //hand
     var hand = createCube(MeterToworld(camera.width), MeterToworld(settings_3d.default), MeterToworld(settings_3d.default), 1);
     hand.position.set(pos.x, MeterToworld(camera.height), pos.y);
@@ -547,18 +546,19 @@ var getJSON = function(url) {
         //display camera
         for(var ii=0; ii<cameraInformationList.length; ii++){
             //create threejs camera model
-            if(ii == cameraIndex)
-                camerList[ii] = CreateThreeCamera(cameraInformationList[ii], viewIndex);
-            else
-                camerList[ii] = CreateThreeCamera(cameraInformationList[ii], -1);
-            cameraLayer.add(camerList[ii]);        
+            if(cameraInformationList[ii].is_active){
+                if(ii == cameraIndex)
+                    camerList[ii] = CreateThreeCamera(cameraInformationList[ii], viewIndex);
+                else
+                    camerList[ii] = CreateThreeCamera(cameraInformationList[ii], -1);
+                cameraLayer.add(camerList[ii]);        
 
-            // add to camera list
-
-            var option = document.createElement(settings_3d.optionDiv);
-            option.text = cameraInformationList[ii].name;
-            option.value = ii;
-            select_list.add(option);
+                // add to camera list
+                var option = document.createElement(settings_3d.optionDiv);
+                option.text = cameraInformationList[ii].name;
+                option.value = ii;
+                select_list.add(option);
+            }
         }
         cameraLayer.addTo(world);
 

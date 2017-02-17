@@ -194,8 +194,26 @@ export class DatabasePointComponent implements OnInit, AfterViewInit, OnDestroy 
 
             this.chart.addSeries({
                 name: 'Point',
-                data: []
+                data: [[Date.UTC(2016, 9, 21), 0],
+                    [Date.UTC(2016, 10, 4), 28],
+                    [Date.UTC(2016, 10, 9), 25],
+                    [Date.UTC(2016, 10, 27), 2],
+                    [Date.UTC(2016, 11, 2), 28],
+                    [Date.UTC(2016, 11, 26), 28],
+                    [Date.UTC(2016, 11, 29), 47],
+                    [Date.UTC(2017, 0, 11), 79],
+                    [Date.UTC(2017, 0, 26), 72],
+                    [Date.UTC(2017, 1, 3), 2],
+                    [Date.UTC(2017, 1, 11), 12],
+                    [Date.UTC(2017, 1, 25), 2],
+                    [Date.UTC(2017, 2, 11), 18],
+                    [Date.UTC(2017, 3, 11), 19],
+                    [Date.UTC(2017, 4, 1), 85],
+                    [Date.UTC(2017, 4, 5), 22],
+                    [Date.UTC(2017, 4, 19), 15],
+                    [Date.UTC(2017, 5, 3), 0]]
             });
+            console.log("here");
         } else {
             // Open modal
             var openDiv = $('#PointAnnoucementOpenModalBtn');

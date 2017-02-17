@@ -211,29 +211,25 @@ export class DatabaseCameraComponent implements OnInit, AfterViewInit, OnDestroy
 
             this.chart.addSeries({
                 name: 'Camera',
-                data: []
+                data: [[Date.UTC(2016, 9, 21), 0],
+                    [Date.UTC(2016, 10, 4), 28],
+                    [Date.UTC(2016, 10, 9), 25],
+                    [Date.UTC(2016, 10, 27), 2],
+                    [Date.UTC(2016, 11, 2), 28],
+                    [Date.UTC(2016, 11, 26), 28],
+                    [Date.UTC(2016, 11, 29), 47],
+                    [Date.UTC(2017, 0, 11), 79],
+                    [Date.UTC(2017, 0, 26), 72],
+                    [Date.UTC(2017, 1, 3), 2],
+                    [Date.UTC(2017, 1, 11), 12],
+                    [Date.UTC(2017, 1, 25), 2],
+                    [Date.UTC(2017, 2, 11), 18],
+                    [Date.UTC(2017, 3, 11), 19],
+                    [Date.UTC(2017, 4, 1), 85],
+                    [Date.UTC(2017, 4, 5), 22],
+                    [Date.UTC(2017, 4, 19), 15],
+                    [Date.UTC(2017, 5, 3), 0]]
             });
-
-            // var observable = Observable.timer(0, this.timeUpdate);
-            // this.timer = observable.subscribe(() => {
-            //     (this.cameraService.GetNumVehiclesCamera(this.Camera))
-            //         .subscribe(
-            //             (result: any) => {
-            //                 var dataLength = this.chart.series[0].data.length;
-            //                 if (dataLength === 0) {
-            //                     this.chart.series[0].addPoint([result.utc_time, result.num_vehicles]);
-            //                 } else {
-            //                     var oldUTC = this.chart.series[0].data[dataLength - 1].x;
-            //                     if (oldUTC < result.utc_time) {
-            //                         this.chart.series[0].addPoint([result.utc_time, result.num_vehicles]);
-            //                     }
-            //                 }
-            //             },
-            //             (err: any) => {
-            //                 console.log(err);
-            //             }
-            //         );
-            // });
         } else {
             // Open modal
             var openDiv = $('#CameraAnnoucementOpenModalBtn');
