@@ -89,11 +89,12 @@ export class DatabasePointComponent implements OnInit, AfterViewInit, OnDestroy 
     // Validations (start) ---------------------------
 
     fromToValidation(group: FormGroup): any {
-        var from = group.value.fromForm.split('/');
-        var to = group.value.toForm.split('/');
-        var fromDate = new Date(from[2], from[0] - 1, from[1]);
-        var toDate = new Date(to[2], to[0] - 1, to[1]);
-        if (fromDate > toDate) {
+        var from = group.value.fromForm.split(' ').join('-').split(':').join('-').split('-');
+        var to = group.value.toForm.split(' ').join('-').split(':').join('-').split('-');
+
+        var fromDate = Date.UTC(from[0], from[1] - 1, from[2], from[3], from[4], from[5]);
+        var toDate = Date.UTC(to[0], to[1] - 1, to[2], to[3], to[4], to[5]);
+        if ((fromDate - toDate) >= 0) {
             return {'FromLessTo': true};
         }
     }
@@ -116,8 +117,11 @@ export class DatabasePointComponent implements OnInit, AfterViewInit, OnDestroy 
     // Create Date pick for From and To Div (start) ------------------
     createDatepickerFromDiv(): void {
         var datePickerDiv:any = $('#'+this.ComponentId+'_fromdiv');
-        datePickerDiv.datepicker({
-            'maxDate': 0
+        datePickerDiv.datetimepicker({
+            format: 'yyyy-mm-dd hh:ii:ss',
+            autoclose: true,
+            todayBtn: true,
+            pickerPosition: 'bottom-left'
         }).on('changeDate', (event: any) => {
             this.from = datePickerDiv.val();
         });
@@ -125,8 +129,11 @@ export class DatabasePointComponent implements OnInit, AfterViewInit, OnDestroy 
 
     createDatepickerToDiv(): void {
         var datePickerDiv:any = $('#'+this.ComponentId+'_todiv');
-        datePickerDiv.datepicker({
-            'maxDate': 0
+        datePickerDiv.datetimepicker({
+            format: 'yyyy-mm-dd hh:ii:ss',
+            autoclose: true,
+            todayBtn: true,
+            pickerPosition: 'bottom-left'
         }).on('changeDate', (event: any) => {
             this.to = datePickerDiv.val();
         });
@@ -213,7 +220,6 @@ export class DatabasePointComponent implements OnInit, AfterViewInit, OnDestroy 
                     [Date.UTC(2017, 4, 19), 15],
                     [Date.UTC(2017, 5, 3), 0]]
             });
-            console.log("here");
         } else {
             // Open modal
             var openDiv = $('#PointAnnoucementOpenModalBtn');

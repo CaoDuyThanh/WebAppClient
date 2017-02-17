@@ -146,30 +146,16 @@ export class RealtimePointComponent implements OnInit, AfterViewInit, OnDestroy 
 
     // Create Timerpicker & LiveStreamCamera (start) ------------------------
     createTimepickerFromDiv(): void {
-        var timePickerDiv:any = $('#'+this.ComponentId+'_fromdiv');
-        timePickerDiv.timepicker({
-            defaultTime: ''
-        }).on('changeTime.timepicker', (event: any) => {
-            this.from = timePickerDiv.val();
+        var datePickerDiv:any = $('#'+this.ComponentId+'_fromdiv');
+        datePickerDiv.datetimepicker({
+            format: 'yyyy-mm-dd hh:ii:ss',
+            autoclose: true,
+            todayBtn: true,
+            pickerPosition: 'bottom-left'
+        }).on('changeDate', (event: any) => {
+            this.from = datePickerDiv.val();
         });
     }
-
-    // createLiveStreamCamera(): void {
-    //     var lastIdx = this.Camera.StreamId.lastIndexOf('/');
-    //     var first = this.Camera.StreamId.substring(0, lastIdx);
-    //     var second = this.Camera.StreamId.substring(lastIdx + 1, this.Camera.StreamId.length);
-    //     jwplayer(this.ComponentId+'_Camera').setup({
-    //         'flashplayer': 'assets/js/player.swf',
-    //         'file': second,
-    //         'streamer': first,
-    //         'controlbar': 'bottom',
-    //         'width': '100%',
-    //         'height': '450'
-    //     });
-    // }
-    // Create Timerpicker & LiveStreamCamera (end) --------------------------
-
-
 
     ngAfterViewInit(): void {
         this.createTimepickerFromDiv();

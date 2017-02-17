@@ -22,11 +22,18 @@ export class RealtimeStatisticComponent implements OnInit {
         var bootstrapTimepicker = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/bootstrap-timepicker.css');
         this.element.nativeElement.appendChild(bootstrapTimepicker);
 
+        var bootstrapDateTimepicker = this.cssHelper.CreateCSSTag('stylesheet', 'text/css',
+            '<%= CSS_SRC %>/bootstrap-datetimepicker.min.css');
+        this.element.nativeElement.appendChild(bootstrapDateTimepicker);
+
         var customStyle = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/custom-style.css');
         this.element.nativeElement.appendChild(customStyle);
 
         var jwplayer = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/jwplayer.js');
         this.element.nativeElement.appendChild(jwplayer);
+
+        var jsDateTime = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/bootstrap-datetimepicker.js');
+        this.element.nativeElement.appendChild(jsDateTime);
 
     }
 

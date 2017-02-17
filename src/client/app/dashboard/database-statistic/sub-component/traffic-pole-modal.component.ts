@@ -32,11 +32,9 @@ export class TrafficPoleModalComponent implements AfterViewInit {
         this.observable.subscribe(
             (result: any) => {
                 setTimeout(() => {
-                    console.log("here");
                     for (var idx = 0; idx < this.TrafficPole.Cameras.length; idx++) {
                         var camera = this.TrafficPole.Cameras[idx];
-                        
-                        if(camera.IsActive){
+                        if(camera.IsActive) {
                             var lastIdx = camera.StreamId.lastIndexOf('/');
                             var first = camera.StreamId.substring(0, lastIdx);
                             var second = camera.StreamId.substring(lastIdx + 1, camera.StreamId.length);

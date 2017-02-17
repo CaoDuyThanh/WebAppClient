@@ -117,7 +117,7 @@ export class MinimapPointComponent implements OnInit {
         return 'Component' + idx.toString();
     }
 
-    deleteTrafficPoint(point: LatLon){
+    deleteTrafficPoint(point: LatLon) {
         if (point) {
             //remove marker
             var idxM = this.trafficPoints.indexOf(point);
@@ -126,7 +126,7 @@ export class MinimapPointComponent implements OnInit {
 
             //remove statistic
             var idx = this.indexs.indexOf(this.trafficPoints.indexOf(point) + 1);
-            if(idx >= 0){
+            if(idx >= 0) {
                 this.componentIds.splice(idx, 1);
                 this.indexs.splice(idx, 1);
             }
