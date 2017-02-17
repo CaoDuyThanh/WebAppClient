@@ -1,5 +1,7 @@
 <div class="row">
 	<div class="col-xl-6" *ngFor="let camera of TrafficPole.Cameras">
-		<div id="{{camera.StreamId}}"></div>
+		<div *ngIf="camera.IsActive">
+			<div id="{{camera.StreamId}}"></div>
+		</div>
 	</div>
 </div>
