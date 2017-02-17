@@ -7,7 +7,7 @@ cameraInformationList = [{
     pole_angle :20,
     name:"Hoang Van Thu",
     width :3,
-    two_pole :true,
+    type :true,
     is_active:true,
     cameras:[{
     	area:13.1,

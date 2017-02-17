@@ -185,7 +185,7 @@ var CameraToControl = function(camera){
     control.pole_angle = camera.pole_angle;
     control.width = camera.width;
     control.view = false;
-    control.two_pole = camera.two_pole;
+    control.two_pole = camera.type;
     control.active = camera.is_active;
 
     control.cameraWidth1 = camera.cameras[0].width;
@@ -231,7 +231,7 @@ var ControlToCamera = function(camera, control){
     camera.height = control.height;
     camera.pole_angle = control.pole_angle;
     camera.width = control.width;
-    camera.two_pole = control.two_pole;
+    camera.type = control.two_pole;
     camera.is_active = control.active;
 
     camera.cameras[0].width = control.cameraWidth1;
@@ -340,7 +340,7 @@ var updateGUI = function(camera, control, gui){
     control.name = camera.name;
     control.pole_angle = camera.pole_angle;
     control.width = camera.width;
-    control.two_pole = camera.two_pole;
+    control.two_pole = camera.type;
     control.active = camera.is_active;
 
     control.cameraWidth1 = camera.cameras[0].width;
@@ -478,7 +478,7 @@ var CreateThreeCamera = function(camera, view){
     cameraModel.add(pole);
     cameraModel.add(hand);
     cameraModel.add(maker);
-    if(camera.two_pole){
+    if(camera.type){
         cameraModel.add(otherpole);
     }
     return cameraModel;
@@ -493,7 +493,7 @@ var newCamera = function(id){
     camera.height = 5;
     camera.pole_angle = 0;
     camera.width = 2;
-    camera.two_pole = false;
+    camera.type = false;
     camera.is_active = true;
     camera.cameras = [];
     camera.pole_id = id + 1;

@@ -68,7 +68,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
 	loadJavascript(): void {
 		// Load External Javascript
-		var jqueryTag = this.scriptHelper.CreateScriptTag('text/javascript', 'http://code.jquery.com/jquery-1.9.1.min.js');
+		var jqueryTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/jquery-1.9.1.min.js');
 		var leafletTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet-src.js');
 		var leafletAjaxTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.ajax.min.js');
 		var leafletVectorgridTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/leaflet.vectorgrid.bundled.js');

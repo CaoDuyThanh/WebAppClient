@@ -23,7 +23,7 @@ export class CameraVisualizeComponent implements AfterViewInit {
 
 	loadJavascript(): void {
 		// Load External Javascript
-		var jqueryTag = this.scriptHelper.CreateScriptTag('text/javascript', 'http://code.jquery.com/jquery-1.9.1.min.js');
+		var jqueryTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/jquery-1.9.1.min.js');
 		var threejsTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/three.min.js');
 		var tweenMaxTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/TweenMax.min.js');
 		var chromaTag = this.scriptHelper.CreateScriptTag('text/javascript', '<%= JS_SRC %>/chroma.min.js');
