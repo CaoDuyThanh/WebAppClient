@@ -1,8 +1,11 @@
 // Import service
 import { DensityService } from '../service/density-service';
+import { MapserviceService } from '../service/mapservice-service';
 
 // Import map config
 import { MapConfig } from '../map/map.config';
+
+declare let L: any;
 
 class BoxHelper {
 	static IntersectArea(bound1: any, bound2: any): number {
@@ -270,6 +273,105 @@ export class DensityMapHelper {
 	}
 }
 
+export class PathFinderHelper {
+	// Service
+	private mapserviceService: MapserviceService;
 
+	// Path finder
+	private startLocation: any;
+	private startMarker: any;
+	private endLocation: any;
+	private endMarker: any;
+
+	// Drawing
+	private map: any;
+	private listPoints: any[];
+	private pathLeaflet: any;
+
+	constructor(mapserviceService: MapserviceService,
+				map: any) {
+		// Service
+		this.mapserviceService = mapserviceService;
+
+		// Path finder
+		this.startLocation = null;
+		this.startMarker = null;
+		this.endLocation = null;
+		this.endMarker = null;
+
+		// Drawing
+		this.map = map;
+		this.listPoints = [];
+		this.pathLeaflet = null;
+	}
+
+	addMarker(lat: number, lon: number): any {
+		 //create marker
+        var iconOptions = L.icon({
+            iconUrl: '<%= JS_SRC %>/images/marker-icon.png',
+            shadowUrl: '<%= JS_SRC %>/images/marker-shadow.png',
+
+            iconSize:     [30, 50],
+            iconAnchor:   [15, 50],
+            shadowSize:   [70, 20],
+            shadowAnchor: [35, 20],
+            popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+        var marker = L.marker([lat, lon], {icon: iconOptions});
+        marker.addTo(this.map);
+        return marker;
+	}
+
+	SetStartLocation(startLocation: any): void {
+		this.startLocation = startLocation;
+		if (this.startMarker) {
+			this.startMarker.removeFrom(this.map);
+		}
+		this.startMarker = this.addMarker(startLocation.lat, startLocation.lng);
+		this.FindPath();
+	}
+
+	SetEndLocation(endLocation: any): void {
+		this.endLocation = endLocation;
+		if (this.endMarker) {
+			this.endMarker.removeFrom(this.map);
+		}
+		this.endMarker = this.addMarker(endLocation.lat, endLocation.lng);
+		this.FindPath();
+	}
+
+	FindPath(): void {
+		if (this.startLocation && this.endLocation) {
+			(this.mapserviceService.FindPath(this.startLocation, this.endLocation))
+				.subscribe(
+					(path: any) => {
+						if (this.pathLeaflet) {
+							this.pathLeaflet.removeFrom(this.map);	
+						}
+
+						path = path.map((point: any) => {
+							point = new L.LatLng(point.lat, point.lon);
+							point.weight = 4;
+							return point;
+						});
+
+						this.pathLeaflet = new L.WeightedPolyline(path, {
+	                        fill: true,
+	                        fillColor: '#FF0000',
+	                        fillOpacity: 0.8,
+	                        stroke: false,
+	                        dropShadow: false,
+	                        gradient: true,
+	                        weightToColor: new L.HSLHueFunction([10, 120], [10.5, 20])
+	                    });
+						this.pathLeaflet.addTo(this.map);
+					},
+					(err: any) => {
+						console.log(err);
+					}
+				);
+		}
+	}
+}
 
 
