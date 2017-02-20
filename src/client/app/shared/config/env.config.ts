@@ -13,6 +13,8 @@ export interface EnvConfig {
 
 	HOST_STATISTIC_API?: string;
 
+	HOST_SERVICE_API?: string;
+
   	API?: string;
   	ENV?: string;
 }
