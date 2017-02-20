@@ -1,6 +1,6 @@
 
 export class MinimapConfig {
-	static ACCESS_TOKEN: string = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw';
+	static ACCESS_TOKEN: string = 'pk.eyJ1IjoiY2hpa2F0YTEyIiwiYSI6ImNpdXFsYzQ4eTAwMDMyenRhOXh6cWRtMnoifQ.njS3XLIOgcXg9ZdChiXs-A';
 	static RASTER_SRC: string = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png';
 	static RASTER_URL: string = MinimapConfig.RASTER_SRC + '?access_token=' + MinimapConfig.ACCESS_TOKEN;
 
