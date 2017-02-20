@@ -16,6 +16,7 @@ import { TrafficPoleModalComponent } from './sub-component/traffic-pole-modal.co
 import { CameraService } from '../service/camera-service';
 import { StreetService } from '../service/street-service';
 import { DensityService } from '../service/density-service';
+import { MapserviceService } from '../service/mapservice-service';
 
 @NgModule({
     imports: [
@@ -33,7 +34,8 @@ import { DensityService } from '../service/density-service';
     			CSSHelper,
     			CameraService,
                 StreetService,
-                DensityService]
+                DensityService,
+                MapserviceService]
 })
 
 export class MapModule { }
