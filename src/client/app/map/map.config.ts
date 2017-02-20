@@ -3,7 +3,7 @@ export class MapConfig {
 	 * URL CONFIG
 	 * @type {String}
 	 */
-	static ACCESS_TOKEN: string = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw';
+	static ACCESS_TOKEN: string = 'pk.eyJ1IjoiY2hpa2F0YTEyIiwiYSI6ImNpdXFsYzQ4eTAwMDMyenRhOXh6cWRtMnoifQ.njS3XLIOgcXg9ZdChiXs-A';
 	static RASTER_SRC: string = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png';
 	static RASTER_URL: string = MapConfig.RASTER_SRC + '?access_token=' + MapConfig.ACCESS_TOKEN;
 	static VECTOR_SRC = 'https://{s}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6/{z}/{x}/{y}.vector.pbf';
@@ -18,7 +18,7 @@ export class MapConfig {
 	static DEFAULT_ZOOM: number = 16;
 	static MIN_ZOOM: number = 13;
 	static MAX_ZOOM: number = 20;
-	static RELOAD_DENSITY = 10000;
+	static RELOAD_DENSITY = 10000000;
 	static TRANSIT_STATUS:any = {
 	                              	0: { display: 'no data', color: '#5b615f' },
 	                              	1: { display: 'very fluid', color: '#1a9850' },
