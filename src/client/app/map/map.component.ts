@@ -13,9 +13,10 @@ import { TrafficPole } from '../service/models/CameraModel';
 import { CameraService } from '../service/camera-service';
 import { StreetService } from '../service/street-service';
 import { DensityService } from '../service/density-service';
+import { MapserviceService } from '../service/mapservice-service';
 
 // Import utils
-import { DensityMapHelper } from '../utils/map.helper';
+import { DensityMapHelper, PathFinderHelper } from '../utils/map.helper';
 
 declare let L: any;
 
@@ -40,6 +41,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 	private rasterLayer: any;
 	private legendLayer: any;
 	private densityMap: DensityMapHelper;
+	private pathFinder: PathFinderHelper;
 
 	// Search component
 	private searchStr: string = '';
@@ -49,6 +51,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 	// Timer
 	private timer: any;
 
+	// Find path on map
+	private startLocation: string
+	private isStartFocus: boolean;
+	private endLocation: string;
+	private isEndFocus: boolean;
+
 	loadCss(): void {
 		// Load External CSS
 		var leafletCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/leaflet.css');
@@ -57,6 +65,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 		var leafletMarkerClusterCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/markercluster.css');
 		var leafletMarkerClusterDefaultCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/markercluster.default.css');
 		var customStyle = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/custom-style.css');
+		var sidebarCss = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/sidebar.css');
 
 		this.elementRef.nativeElement.appendChild(leafletCss);
 		this.elementRef.nativeElement.appendChild(styleCss);
@@ -64,6 +73,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 		this.elementRef.nativeElement.appendChild(leafletMarkerClusterDefaultCss);
 		this.elementRef.nativeElement.appendChild(leafletMarkerClusterCss);
 		this.elementRef.nativeElement.appendChild(customStyle);
+		this.elementRef.nativeElement.appendChild(sidebarCss);
 	}
 
 	loadJavascript(): void {
@@ -97,6 +107,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 	constructor(private cameraService: CameraService,
 				private streetService: StreetService,
 				private densityService: DensityService,
+				private mapserviceService: MapserviceService,
 				private elementRef: ElementRef,
 				private cssHelper: CSSHelper,
 				private scriptHelper: ScriptHelper) {
@@ -105,6 +116,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
 		// Timer
 		this.timer = null;
+
+		// Find path
+		this.startLocation = '';
+		this.isStartFocus = false;
+		this.endLocation = '';
+		this.isEndFocus = false;
 	}
 
 	ngAfterViewInit() {
@@ -118,11 +135,43 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 			this.isLoadMap = true;
 			this.loadMap();
 			this.loadCamera();
+			this.loadServices();
 		}, 5000);
 	}
 
-	// LOAD MAP (START) ----------------------------------------
+	// SERVICE ---------------------------------------
+		// PATH FINDING ----------------------------------
+		onFocus(tag: string): void {
+			if (tag === 'start') {
+				this.isStartFocus = true;
+				this.isEndFocus = false;
+			} else {
+				this.isStartFocus = false;
+				this.isEndFocus = true;
+			}
+		}
 
+		loadFindPathService(): void {
+			this.pathFinder = new PathFinderHelper(this.mapserviceService, this.mymap);
+			this.mymap.on('click', (event: any) => {
+				if (this.isStartFocus) {
+					this.pathFinder.SetStartLocation(event.latlng);
+				}
+				if (this.isEndFocus) {
+					this.pathFinder.SetEndLocation(event.latlng);
+				}
+			});
+		}
+		// PATH FINDING (END) ----------------------------
+
+		loadServices(): void {
+			this.loadFindPathService();
+		}
+	// SERVICE (END) ---------------------------------
+
+	
+
+	// LOAD MAP ------------------------------------------------
 	createRasterLayer(): void {
 		this.mymap = L.map('main_map');
 		var rasterOption = {
@@ -255,7 +304,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 			);
 	}
 
-	// SEARCH FUNCTION (START) ----------------------
+	// SEARCH FUNCTION ------------------------------
 	suggestSearchSelected(suggestSearch: any) {
 		this.searchStr = suggestSearch ? suggestSearch.name : 'none';
 	}
@@ -284,6 +333,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 			);
 	}
 	// SEARCH FUNCTION (END) -------------------------
+
+	
 
 	ngOnDestroy() {
 		if (this.timer) {
