@@ -86,7 +86,7 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
                 type: this.graphType === 'LineGraph' ? 'spline' : 'column'
             },
             title: {
-                text: 'Number of vehicles'
+                text: 'Density'
             },
             subtitle: {
                 text: ''
@@ -105,7 +105,7 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
             },
             yAxis: {
                 title: {
-                    text: 'Number of vehicles'
+                    text: 'Density'
                 },
                 min: 0
             },
@@ -176,16 +176,16 @@ export class RealtimeCameraComponent implements OnInit, AfterViewInit, OnDestroy
             this.isRunning = true;
             var observable = Observable.timer(0, +this.timeUpdate);
             this.timer = observable.subscribe(() => {
-                (this.cameraService.GetNumVehiclesCamera(this.Camera))
+                (this.cameraService.GetCameraDensity(this.Camera))
                     .subscribe(
                         (result: any) => {
                             var dataLength = this.chart.series[0].data.length;
                             if (dataLength === 0) {
-                                this.chart.series[0].addPoint([result.utc_time, result.num_vehicles]);
+                                this.chart.series[0].addPoint([result.utc_time, result.density]);
                             } else {
                                 var oldUTC = this.chart.series[0].data[dataLength - 1].x;
                                 if (oldUTC < result.utc_time) {
-                                    this.chart.series[0].addPoint([result.utc_time, result.num_vehicles]);
+                                    this.chart.series[0].addPoint([result.utc_time, result.density]);
                                 }
                             }
                         },
