@@ -240,16 +240,16 @@ export class RealtimeStreetComponent implements OnInit, AfterViewInit, OnDestroy
             this.timer = observable.subscribe(() => {
                 for (let idx:number = 0; idx < this.listRoads.length; idx++) {
                     var streetName = this.listRoads[idx];
-                    (this.streetService.GetNumVehiclesStreet(streetName))
+                    (this.streetService.GetStreetDensity(streetName))
                         .subscribe(
                             (result: any) => {
                                 var dataLength = this.chart.series[idx].data.length;
                                 if (dataLength === 0) {
-                                    this.chart.series[idx].addPoint([result.utc_time, result.num_vehicles]);
+                                    this.chart.series[idx].addPoint([result.utc_time, result.density_ave]);
                                 } else {
                                     var oldUTC = this.chart.series[idx].data[dataLength - 1].x;
                                     if (oldUTC < result.utc_time) {
-                                        this.chart.series[idx].addPoint([result.utc_time, result.num_vehicles]);
+                                        this.chart.series[idx].addPoint([result.utc_time, result.density_ave]);
                                     }
                                 }
                             },
