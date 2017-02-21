@@ -25,18 +25,20 @@ export class MinimapPointComponent implements OnInit {
     private indexs:number[];
     private markers: any[];
 
-    // Realtime camera components
+    // Realtime point components
     private componentIds:number[];
 
     constructor(private elementRef: ElementRef,
                 private scriptHelper: ScriptHelper,
                 private cssHelper: CSSHelper) {
         this.isLoadMap = false;
-        this.componentIds = [];
         this.trafficPoints = [];
         this.indexs = [];
         this.markers = [];
         this.selectedTrafficPoint = new LatLon();
+
+        // Realtime point components
+        this.componentIds = [];
     }
 
     ngOnInit() {
