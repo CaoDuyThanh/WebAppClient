@@ -64,14 +64,9 @@
 			  	<option value="BarGraph">Bar graph</option>				  	
 			</select>
 		</div>
-	</div>
-	<!-- Third row (end) -->	
-	<br>
 
-	<!-- Four row (start) -->
-	<div class="row">
 		<!-- Time update dropdown -->
-		<div class="col-xl-4" style="margin-bottom: 10px;">
+		<div class="col-md-6" style="margin-bottom: 10px;">
 			<select id="{{ComponentId}}_ViewType" class="custom-select" style="width: 100%" 
 																		(change)="onTimeUpdateChange($event.target.value)"
 																		[(ngModel)]="timeUpdate"
@@ -86,9 +81,14 @@
 				<option value="300000">5 minutes</option>
 			</select>
 		</div>
+	</div>
+	<!-- Third row (end) -->	
+	<br>
 
+	<!-- Four row (start) -->
+	<div class="row">
 		<!-- Reset and Viewgraph button -->
-		<div class="col-xl-8" style="margin-bottom: 10px;">
+		<div class="col-xl-12" style="margin-bottom: 10px;">
 			<div style="float:right" class="btn btn-primary" 
 						*ngIf="!isRunning"
 						(click)="ClickStart()"><i class="fa fa-play"></i> &nbsp; Start</div>
