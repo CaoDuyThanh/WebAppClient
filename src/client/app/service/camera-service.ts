@@ -119,12 +119,30 @@ export class CameraService {
 	}
 
 	// NOT FINISH - need add parameters to determine which camera got information
-	GetNumVehiclesCamera(camera: Camera): Observable<any> {
+	GetCameraNumVehicles(camera: Camera): Observable<any> {
 		let params: string = [
 			`pole_id=${camera.Parent.PoleId}`,
 			`stream_id=${camera.StreamId}`
 		].join('&');
 		let queryUrl = Config.HOST_STATISTIC_API + '/vehicles/camera?' + params;
+		return this.http.get(queryUrl)
+            .map((res: Response) => {
+                let result = res.json();
+                if (result.status === 'success') {
+                	return result.data;
+                } else {
+                	console.log(result.message);
+                	return 0;
+                }
+            });
+	}
+
+	GetCameraDensity(camera: Camera): Observable<any> {
+		let params: string = [
+			`pole_id=${camera.Parent.PoleId}`,
+			`stream_id=${camera.StreamId}`
+		].join('&');
+		let queryUrl = Config.HOST_STATISTIC_API + '/density/camera?' + params;
 		return this.http.get(queryUrl)
             .map((res: Response) => {
                 let result = res.json();
