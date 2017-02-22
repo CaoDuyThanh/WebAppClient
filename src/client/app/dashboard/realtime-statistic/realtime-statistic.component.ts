@@ -22,7 +22,8 @@ export class RealtimeStatisticComponent implements OnInit {
         var bootstrapTimepicker = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/bootstrap-timepicker.css');
         this.element.nativeElement.appendChild(bootstrapTimepicker);
 
-        var bootstrapDateTimepicker = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/bootstrap-datetimepicker.min.css');
+        var bootstrapDateTimepicker = this.cssHelper.CreateCSSTag('stylesheet', 'text/css',
+                                                      '<%= CSS_SRC %>/bootstrap-datetimepicker.min.css');
         this.element.nativeElement.appendChild(bootstrapDateTimepicker);
 
         var customStyle = this.cssHelper.CreateCSSTag('stylesheet', 'text/css', '<%= CSS_SRC %>/custom-style.css');

@@ -21,7 +21,7 @@ export class MinimapPointComponent implements OnInit {
     private isLoadMap: boolean;
     private mymap: any;
     private trafficPoints: LatLon[];
-    private selectedTrafficPoint: LatLon;
+    private selectedTrafficPoints: LatLon[];
     private indexs:number[];
     private markers: any[];
 
@@ -35,7 +35,7 @@ export class MinimapPointComponent implements OnInit {
         this.trafficPoints = [];
         this.indexs = [];
         this.markers = [];
-        this.selectedTrafficPoint = new LatLon();
+        this.selectedTrafficPoints = [];
 
         // Realtime point components
         this.componentIds = [];
@@ -96,13 +96,10 @@ export class MinimapPointComponent implements OnInit {
         });
         var marker = L.marker([trafficPoint.Lat, trafficPoint.Lon], {icon: iconOptions})
                         .on('click', () => {
-                                this.selectedTrafficPoint = trafficPoint;
-
                                 //add to view
                                 this.AddPoint(trafficPoint);
                             }).on('contextmenu', () => {
                                 //remove marker
-                                this.selectedTrafficPoint = trafficPoint;
                                 this.deleteTrafficPoint(trafficPoint);
                             });
 
@@ -126,11 +123,13 @@ export class MinimapPointComponent implements OnInit {
             var marker = this.markers[idxM];
             marker.remove();
 
+
             //remove statistic
             var idx = this.indexs.indexOf(this.trafficPoints.indexOf(point) + 1);
             if(idx >= 0) {
                 this.componentIds.splice(idx, 1);
                 this.indexs.splice(idx, 1);
+                this.selectedTrafficPoints.splice(idx, 1);
             }
         }
     }
@@ -140,6 +139,7 @@ export class MinimapPointComponent implements OnInit {
             if(this.indexs.indexOf(this.trafficPoints.indexOf(point) + 1) < 0) {
                 var currentTimeStamp = Math.floor(Date.now());
                 this.componentIds.push(currentTimeStamp);
+                this.selectedTrafficPoints.push(point);
                 this.indexs.push(this.trafficPoints.indexOf(point) + 1);
             }
         }
@@ -149,5 +149,6 @@ export class MinimapPointComponent implements OnInit {
         var idx = this.componentIds.indexOf(componentId);
         this.componentIds.splice(idx, 1);
         this.indexs.splice(idx, 1);
+        this.selectedTrafficPoints.splice(idx, 1);
     }
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Input,
          ViewChild, ViewContainerRef, ComponentFactoryResolver, EventEmitter, ReflectiveInjector } from '@angular/core';
 import { AbstractControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { MinimapConfig } from './minimap.config';
 
 // Import components
 import { WarningPanelComponent } from '../../../shared/shared-module/warning-panel/warning-panel';
@@ -13,6 +14,8 @@ import { LatLon } from '../../../service/models/CameraModel';
 
 // Import utils
 import { EventData } from '../../../utils/event.helper';
+
+declare let L: any;
 
 @Component({
     moduleId: module.id,
@@ -52,6 +55,9 @@ export class DatabasePointComponent implements OnInit, AfterViewInit, OnDestroy 
 
     // Timer
     private timer: any;
+
+    // Map
+    private mymap: any;
 
     constructor(private fb: FormBuilder,
                 private resolver: ComponentFactoryResolver) {
@@ -105,6 +111,38 @@ export class DatabasePointComponent implements OnInit, AfterViewInit, OnDestroy 
         this.createChartOptions();
     }
 
+    createMap(): void {
+        // Create map
+        this.mymap = L.map(this.ComponentId + '_Map');
+        var rasterOption = { maxZoom: 17, id: MinimapConfig.MAPID };
+        var rasterLayer = L.tileLayer(MinimapConfig.RASTER_URL, rasterOption);
+        rasterLayer.addTo(this.mymap);
+        this.mymap.setView([this.Point.Lat, this.Point.Lon], 17);
+
+        // Disable function
+        this.mymap.dragging.disable();
+        this.mymap.touchZoom.disable();
+        this.mymap.doubleClickZoom.disable();
+        this.mymap.scrollWheelZoom.disable();
+        this.mymap.boxZoom.disable();
+        this.mymap.keyboard.disable();
+
+
+        // Add marker
+        var iconOptions = L.icon({
+            iconUrl: '<%= JS_SRC %>/images/marker-icon.png',
+            shadowUrl: '<%= JS_SRC %>/images/marker-shadow.png',
+
+            iconSize:     [30, 50],
+            iconAnchor:   [15, 50],
+            shadowSize:   [70, 20],
+            shadowAnchor: [35, 20],
+            popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+        var marker = L.marker([this.Point.Lat, this.Point.Lon], {icon: iconOptions});
+        marker.addTo(this.mymap);
+    }
+
     onGraphTypeChange(graphType: string): void {
         this.graphType = graphType;
         this.createChartOptions();
@@ -143,6 +181,8 @@ export class DatabasePointComponent implements OnInit, AfterViewInit, OnDestroy 
     ngAfterViewInit(): void {
         this.createDatepickerFromDiv();
         this.createDatepickerToDiv();
+        // Create map
+        setTimeout(this.createMap(), 2000);
     }
 
     SaveChart(chart:any): void {

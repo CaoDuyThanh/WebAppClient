@@ -182,8 +182,6 @@ export class RealtimePointComponent implements OnInit, AfterViewInit, OnDestroy 
         this.timeUpdate = timeUpdate;
     }
 
-    
-
     SaveChart(chart:any): void {
         this.chart = chart;
     }
