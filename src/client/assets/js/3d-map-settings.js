@@ -14,11 +14,15 @@ settings_3d.defaultY = 30;
 settings_3d.defaultZ = 1;
 settings_3d.default = 1/5;
 
+//Map server key
+settings_3d.mapboxKey = 'pk.eyJ1IjoiY2hpa2F0YTEyIiwiYSI6ImNpdXFsYzQ4eTAwMDMyenRhOXh6cWRtMnoifQ.njS3XLIOgcXg9ZdChiXs-A';
+settings_3d.mapzenKey = 'mapzen-RwTnfdc';
+
 //tile server
-settings_3d.rasterAPI = 'https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw';
+settings_3d.rasterAPI = 'https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=' + settings_3d.mapboxKey;
 settings_3d.rasterAtb = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
-settings_3d.vectorBuildingsAPI = 'https://vector.mapzen.com/osm/buildings/{z}/{x}/{y}.topojson?api_key=vector-tiles-NT5Emiw';
-settings_3d.vectorRoadsAPI = 'https://vector.mapzen.com/osm/roads/{z}/{x}/{y}.topojson?api_key=vector-tiles-NT5Emiw';
+settings_3d.vectorBuildingsAPI = 'http://tile.mapzen.com/mapzen/vector/v1/buildings/{z}/{x}/{y}.topojson?api_key=' + settings_3d.mapzenKey;
+settings_3d.vectorRoadsAPI = 'http://tile.mapzen.com/mapzen/vector/v1/roads/{z}/{x}/{y}.topojson?api_key=' + settings_3d.mapzenKey;
 settings_3d.vectorAtb = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://whosonfirst.mapzen.com#License">Who\'s On First</a>.';
 
 //API from server

@@ -107,14 +107,14 @@ var drawDensityLayer = function(){
     var count = 0;
     
     if (settings_3d.density){
+        
         var kind = getFilterRoad(world._engine._camera.position.y);
 
-        // for()
+        
         newTopoJSONTileLayer = VIZI.topoJSONTileLayer(settings_3d.vectorRoadsAPI, {
             interactive: false,
             style: function(feature) {
                 var height;
-
                 //get density color from server
                 getDensityById(feature.properties.id);
 
@@ -133,7 +133,7 @@ var drawDensityLayer = function(){
             filter: function(feature) {
 
                 // return feature.geometry.type !== 'Point' && (feature.properties.kind == 'major_road' );
-                return feature.geometry.type !== 'Point' && kind.indexOf(feature.properties.highway) > -1;
+                return feature.geometry.type !== 'Point' && kind.indexOf(feature.properties.kind_detail) > -1;
             },
             attribution: settings_3d.vectorAtb
         }).addTo(world);
