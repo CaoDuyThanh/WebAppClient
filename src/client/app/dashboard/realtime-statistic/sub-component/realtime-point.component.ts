@@ -8,8 +8,7 @@ import { Observable } from 'rxjs';
 import { WarningPanelComponent } from '../../../shared/shared-module/warning-panel/warning-panel';
 
 // Import Service
-// import { CameraService } from '../../../service/camera-service';
-import { StreetService } from '../../../service/street-service';
+import { SegmentService } from '../../../service/segment-service';
 
 // Import models
 import { LatLon } from '../../../service/models/CameraModel';
@@ -57,7 +56,7 @@ export class RealtimePointComponent implements OnInit, AfterViewInit, OnDestroy 
     // Map
     private mymap: any;
 
-    constructor(private streetService: StreetService,
+    constructor(private segmentService: SegmentService,
                 private fb: FormBuilder,
                 private resolver: ComponentFactoryResolver) {
         // Input form
@@ -201,17 +200,16 @@ export class RealtimePointComponent implements OnInit, AfterViewInit, OnDestroy 
             this.isRunning = true;
             var observable = Observable.timer(0, +this.timeUpdate);
             this.timer = observable.subscribe(() => {
-                    var streetName = 'Lý Thường Kiệt';
-                    (this.streetService.GetNumVehiclesStreet(streetName))
+                    (this.segmentService.GetPointDensity(this.Point.Lat, this.Point.Lon))
                         .subscribe(
                             (result: any) => {
                                 var dataLength = this.chart.series[0].data.length;
                                 if (dataLength === 0) {
-                                    this.chart.series[0].addPoint([result.utc_time, result.num_vehicles]);
+                                    this.chart.series[0].addPoint([result.utc_time, result.density]);
                                 } else {
                                     var oldUTC = this.chart.series[0].data[dataLength - 1].x;
                                     if (oldUTC < result.utc_time) {
-                                        this.chart.series[0].addPoint([result.utc_time, result.num_vehicles]);
+                                        this.chart.series[0].addPoint([result.utc_time, result.density]);
                                     }
                                 }
                             },
