@@ -22,6 +22,7 @@ import { MinimapPointComponent } from './sub-component/minimap-point.component';
 // Import services
 import { StreetService } from '../../service/street-service';
 import { CameraService } from '../../service/camera-service';
+import { SegmentService } from '../../service/segment-service';
 import { CSSHelper } from '../../utils/css.helper';
 
 @NgModule({
@@ -48,6 +49,7 @@ import { CSSHelper } from '../../utils/css.helper';
     providers: [
         StreetService,
         CameraService,
+        SegmentService,
         CSSHelper
     ]
 })
