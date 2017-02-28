@@ -237,7 +237,9 @@ function changeCamera(){
     world._controls[0].flyToLatLon(latlon, 3, 1);
 
     //update video player
-    setupPlayer(settings_3d.playerDiv, cameraInformationList[cameraIndex].cameras[viewIndex].stream_id, 300, 280);  
+    setupPlayer(settings_3d.playerDiv, cameraInformationList[cameraIndex].cameras[viewIndex].stream_id, 300, 280); 
+
+    controls.reDrawSegments(); 
 
 }
 
