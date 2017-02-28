@@ -45,6 +45,9 @@ var createCube = function(x, y, z, color){
             case 5:
                 hex = 0xb99f4d;
                 break; 
+            case 6:
+                hex = 0x02423b;
+                break; 
             default:
                 hex = 0x553f18;
         }
@@ -106,6 +109,24 @@ var CameraSettings = function() {
     this.fov4 = 45;
     this.area4 = 10.001;
     this.one_way4 = true;
+
+    this.addSegment = false;
+    this.resetSegment = function(){
+        cameraInformationList[cameraIndex].cameras[viewIndex].road = [];
+
+        this.reDrawSegments();
+    }
+
+    this.reDrawSegments = function(){
+        //remove
+        cameraLayer.remove(segmentList);
+        
+        //create new
+        segmentList = CreateSegment(cameraInformationList[cameraIndex].cameras[viewIndex].road);
+
+        //add
+        cameraLayer.add(segmentList);
+    }
 
     this.newCamera=function(){
         cameraIndex = cameraInformationList.length;
@@ -285,6 +306,8 @@ var createGUI = function(controls){
     gui.add(controls, 'pole_angle', 0, 360).onChange(controls.updateDraw);
 
     //select camera to view
+    gui.add(controls, "addSegment").onChange(controls.reDrawSegments);
+    gui.add(controls, "resetSegment");
     gui.add(controls, "viewCamera", controls.list).onChange(controls.updateView);
     //first camera
     var f1 = gui.addFolder('Main camera');
@@ -399,6 +422,42 @@ var worldToMeter = function(world){
 //TODO: convert meter to world
 var MeterToworld = function(meter){
     return 3*meter;
+}
+
+//Create segments elements
+var CreateSegment = function(segments){
+    var segmentModel = new THREE.Object3D();
+    for(var ii = 0; ii < segments.length; ii+=2){
+        if(ii+1 == segments.length)
+            return segmentModel;
+
+        if(controls.addSegment == true){
+            //get segment info
+            var latlonBegin = new VIZI.LatLon(segments[ii].lat, segments[ii].lon);
+            var posBegin = world.latLonToPoint(latlonBegin);
+
+            var latlonEnd = new VIZI.LatLon(segments[ii + 1].lat, segments[ii + 1].lon);
+            var posEnd = world.latLonToPoint(latlonEnd);
+
+            var len = Math.sqrt((posBegin.x - posEnd.x) * (posBegin.x - posEnd.x) +
+                                (posBegin.y - posEnd.y) * (posBegin.y - posEnd.y));
+
+            //create line
+            var line = createCube(len, MeterToworld(settings_3d.default), MeterToworld(settings_3d.default), 6);
+            line.position.set(posBegin.x, 0, posBegin.y);
+
+            //set rotation and translate
+            var rotateAngle = Math.atan2((posBegin.x - posEnd.x), (posBegin.y - posEnd.y)) + Math.PI /2;
+            line.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
+            line.translateX(len/2);
+
+            //set to view
+            
+            segmentModel.add(line)
+        }
+    }
+
+    return segmentModel;
 }
 
 //create camera model
@@ -581,7 +640,6 @@ var updatePole = function(url, camera) {
         data: {data: JSON.stringify(camera)},
         success: function(result) {
             // Do something with the result
-            console.log(result);
             console.log("Update data success!");
         }
     });

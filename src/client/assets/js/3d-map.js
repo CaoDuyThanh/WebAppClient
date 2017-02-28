@@ -189,6 +189,11 @@ function getClickPosition(e) {
         //redraw camera model
         controls.updateDraw();
         updateGuiElement(gui);
+    } else if(controls.addSegment){
+        var latlon = world.pointToLatLon(new VIZI.Point(pos.x, pos.z));
+        // console.log(latlon);
+        cameraInformationList[cameraIndex].cameras[viewIndex].road.push(latlon)
+        controls.reDrawSegments();
     }
 }
 
@@ -206,6 +211,7 @@ gui.domElement.id = 'gui';
 // mapContainer.appendChild(gui.domElement);
 
 var camerList = [];
+var segmentList = {};
 var cameraIndex = 0;
 var viewIndex = 0;
 
