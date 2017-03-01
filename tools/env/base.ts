@@ -13,6 +13,8 @@ const BaseConfig: EnvConfig = {
 
 	HOST_STATISTIC_API: 'http://192.168.1.107:4000/statistic',
 
+	HOST_SERVER_DENSITY_API: 'http://192.168.1.107:4000/servers',
+
 	// Sample API url
 	API: 'https://demo.com'
 };
