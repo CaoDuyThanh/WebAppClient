@@ -7,6 +7,7 @@ import { ModalModule } from 'ng2-bootstrap/ng2-bootstrap';
 import { HomeModule } from './home/home.module';
 import { MapSettingsModule } from './map-settings/map-settings.module';
 import { CameraSettingsModule } from './camera-settings/camera-settings.module';
+import { ServerDensitySettingsModule } from './server-density/server-density-settings.module';
 import { RealtimeStatisticModule } from './realtime-statistic/realtime-statistic.module';
 import { DatabaseStatisticModule } from './database-statistic/database-statistic.module';
 import { CameraVisualizeModule } from './camera-visualize/camera-visualize.module';
@@ -34,6 +35,7 @@ import {SidebarComponent} from '../shared/index';
         // Setting Modules
         MapSettingsModule,
         CameraSettingsModule,
+        ServerDensitySettingsModule,
 
         // Statistic Modules
         DatabaseStatisticModule,

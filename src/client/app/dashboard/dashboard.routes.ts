@@ -3,6 +3,7 @@ import { Route } from '@angular/router';
 import { HomeRoutes } from './home/index';
 import { MapSettingsRoutes } from './map-settings/index';
 import { CameraSettingsRoutes } from './camera-settings/index';
+import { ServerDensitySettingsRoutes } from './server-density/index';
 import { CameraVisualizeRoutes } from './camera-visualize/index';
 import { RealtimeStatisticRoutes } from './realtime-statistic/index';
 import { DatabaseStatisticRoutes } from './database-statistic/index';
@@ -26,6 +27,7 @@ export const DashboardRoutes: Route[] = [
             // Settings Components
             ...MapSettingsRoutes,
             ...CameraSettingsRoutes,
+            ...ServerDensitySettingsRoutes,
 
             // Statistic Component
             ...DatabaseStatisticRoutes,
