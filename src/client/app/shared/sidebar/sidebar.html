@@ -11,7 +11,8 @@
             <a class="list-group-item" (click)="addExpandClass('settings')">
                 <span><i class="fa fa-fw fa-wrench"></i> &nbsp; Settings</span>
             </a>
-            <li class="nested" [ngClass]="{'expand' : showMenu === 'settings' }">
+            <li class="nested" [ngClass]="{'expand' : showMenu === 'settings' }"  style="position: relative;
+                                                                                         background: #222">
                 <ul class="submenu">
                     <li>
                         <a [routerLink]="['map-settings']" [routerLinkActive]="['router-link-active']">
@@ -23,6 +24,11 @@
                             <i class="fa fa-video-camera"></i> &nbsp; <span>Camera settings</span>
                         </a>
                     </li>
+                    <li>
+                        <a [routerLink]="['server-density']" [routerLinkActive]="['router-link-active']">
+                            <i class="fa fa-server"></i> &nbsp; <span>Server density</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
         </div>        
@@ -31,7 +37,9 @@
             <a class="list-group-item" (click)="addExpandClass('statistic')">
                 <span><i class="fa fa-fw fa-bar-chart-o"></i> &nbsp; Statistic</span>
             </a>
-            <li class="nested" [ngClass]="{'expand' : showMenu === 'statistic' }">
+            
+            <li class="nested" [ngClass]="{'expand' : showMenu === 'statistic' }" style="position: relative;
+                                                                                         background: #222">
                 <ul class="submenu">
                     <li>
                         <a [routerLink]="['database-statistic']" [routerLinkActive]="['router-link-active']">
@@ -51,6 +59,8 @@
                 </ul>
             </li>
         </div>
+
+        
 
         <a [routerLink]="['map-simulation']" [routerLinkActive]="['router-link-active']" class="list-group-item">
             <i class="fa fa-fw fa-desktop"></i> &nbsp; 3D map simulation
