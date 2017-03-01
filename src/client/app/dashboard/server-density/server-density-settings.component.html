@@ -1,0 +1,192 @@
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-xl-12">
+            <h1 class="page-header">
+                Camera Settings
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <i class="fa fa-dashboard"></i>
+                    <a href="Javascript:void(0)" routerLink="/dashboard/home" > Dashboard</a>
+                </li>
+                <li class="active">
+                    <i class="fa fa-server"></i> Server Density
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Server density table -->
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>
+                Server density settings
+
+                <!-- Create Button (start) -->
+                <div style="float: right;" data-toggle="modal" data-target="#ShowCreateServerDensity">
+                    <button class="btn btn-primary" (click)="ClickCreate()"><i class="fa fa-plus-circle"></i> &nbsp; Create</button>
+                </div>
+                <!-- Create Button (end) -->
+
+                <!-- Action Button (start) -->
+                <div style="float: right; margin-right: 20px;">
+                    <div class="dropdown">
+                        <a class="btn btn-secondary dropdown-toggle" href="" id="DropdownAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Action
+                        </a>
+
+                        <div class="dropdown-menu" aria-labelledby="DropdownAction">
+                            <a class="btn btn-danger" style="width: 100%; text-align: left;" (click)="SelectDelete()" data-toggle="modal" data-target="#YesnoModal"><i class="fa fa-minus-circle"></i> &nbsp; Delete</a>
+                            <a class="btn btn-success" style="width: 100%; text-align: left;" (click)="SelectActive()" data-toggle="modal" data-target="#YesnoModal"><i class="fa fa-toggle-on"></i> &nbsp; Active</a>
+                            <a class="btn btn-active" style="width: 100%; text-align: left;" (click)="SelectDeactive()" data-toggle="modal" data-target="#YesnoModal"><i class="fa fa-toggle-off"></i> &nbsp; Deactive</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Action Button (end) -->
+
+                <!-- Select number of items (start) -->
+<!--                 <div style="float: right; margin-right: 20px;">
+                    <select class="custom-select" style="font-size: 1rem; border-radius: 0.25rem;" (change)="onNumItemsChange($event.target.value)">
+                        <option value="5" selected>5 items</option>
+                        <option value="10">10 items</option>
+                        <option value="20">20 items</option>
+                        <option value="50">50 items</option>
+                        <option value="100">100 items</option>                        
+                    </select>
+                </div>
+ -->                <!-- Select number of items (end) -->
+            </h3>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" aria-label="" #CheckAll (click)="ClickCheckAll(CheckAll)">
+                    </th>
+                    <th>Server_id</th>
+                    <th>Address</th>
+                    <th>Port</th>
+                    <th>Is Active</th>
+                    <th>No. Cameras</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let serverDensity of ServerDensities; let idx=index; let even = even; let odd = odd" [ngClass]="{'table-active': odd}">
+                    <td>
+                        <input type="checkbox" [(ngModel)]="choiceServerDensities[idx]" (click)="ClickCheck($event, idx)">
+                    </td>                   
+                    <td><div data-toggle="modal" data-target="#ShowServerDensityInfo" (click)="ShowServerDensityInfo(serverDensity)">{{ serverDensity.ServerId }}</div></td>
+                    <td><div data-toggle="modal" data-target="#ShowServerDensityInfo" (click)="ShowServerDensityInfo(serverDensity)">{{ serverDensity.Address }}</div></td>
+                    <td><div data-toggle="modal" data-target="#ShowServerDensityInfo" (click)="ShowServerDensityInfo(serverDensity)">{{ serverDensity.Port }}</div></td>
+                    <td><div data-toggle="modal" data-target="#ShowServerDensityInfo" (click)="ShowServerDensityInfo(serverDensity)">{{ serverDensity.IsActive }}</div></td>
+                    <td><div data-toggle="modal" data-target="#ShowServerDensityInfo" (click)="ShowServerDensityInfo(serverDensity)">{{ serverDensity.Cameras.length }}</div></td>
+                    <td>
+                        <!-- Edit button -->
+                        <a data-toggle="modal" data-target="#ShowCreateServerDensity" class="btn btn-primary" (click)="ClickEdit(serverDensity)" >Edit</a>
+                        <!-- Delete Button -->
+                        <a  data-toggle="modal" data-target="#DeleteModal" class="btn btn-danger" (click)="ClickDelete(serverDensity.ServerId)">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Paging section-->
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="Page navigation example" (init)="getNumItems()">
+                    <ul class="pagination">
+                        <li class="page-item"><a class="page-link btn" (click)="ClickPrevious()">Previous</a></li>
+
+                        <li [ngClass]="{'active': pageData.IsActive,
+                                        'page-item': true }"
+                            *ngFor="let pageData of pages.PagesDisplay; let i=index">
+                                <a class="page-link" (click)="GetPage(pageData.Display)">{{ pageData.Display }}</a>
+                        </li>
+
+                        <li class="page-item"><a class="page-link btn" (click)="ClickNext()">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal (Start) -->
+    <!-- <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Delete an item
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </h5>                    
+                </div>
+                <div class="modal-body">
+                    <p>{{ deleteMessage }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="DeleteTrafficPole()">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <!-- Delete Modal (End) -->
+
+    <!-- Yesno Modal (start) -->
+    <!-- <div class="modal fade" id="YesnoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div #YesnoModalContainer></div>
+                <button id="YesnoModalBtn" type="button" style="display: none;" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div> -->
+    <!-- Yesno Modal (end) -->
+
+    <!-- Show ServerDensity Information Modal (Start) -->
+    <div class="modal fade" id="ShowServerDensityInfo" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Server density information
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </h5>                    
+                </div>
+                <div class="modal-body">
+                    <pre>{{ ServerDensityInfo | json }}</pre>
+                </div>                            
+            </div>
+        </div>
+    </div>
+    <!-- Show ServerDensity Information Modal (End) -->                
+
+    <!-- Show create server density Modal (start) -->
+    <div class="modal fade" id="ShowCreateServerDensity" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Create new server density
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </h5>                    
+                </div>
+                <div class="modal-body">
+                    <div #ServerDensityModalContainer></div>                  
+                </div>                            
+            </div>
+        </div>
+    </div>
+    <!-- Show create server density Modal (end) -->
+
+    <!-- Show popup -->
+    <popup-cmp [Message]="popupMessage" (PopupListener)="popupType = $event"></popup-cmp>
+
+</div>
